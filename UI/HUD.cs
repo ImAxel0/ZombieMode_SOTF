@@ -4,7 +4,7 @@ using UnityEngine;
 using RedLoader;
 
 using static SUI.SUI;
-using static ZombieMode.UI.AXSUI;
+using static ZombieMode.Libs.AXSUI;
 using TheForest.Utils;
 using TMPro;
 using UnityEngine.UI;
@@ -33,7 +33,15 @@ public class HUD : MonoBehaviour
         Font font = new Font(@"C:\Users\Alex\Downloads\HeadlinerNo.45.ttf");
         TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(font);
 
-        HudPanel = AxCreateFillPanel("Hud", Color.black.WithAlpha(0)).Active(false).OverrideSorting(200);
+        HudPanel = AxCreateFillPanel("ZombieModeHud", Color.black.WithAlpha(0)).Active(false).OverrideSorting(200);
+
+        // consumables panel
+        var consumablesBox = AxCreatePanel("ConsumablesBox", false, new Vector2(850, 120), AnchorType.TopCenter, Color.black.WithAlpha(0), EBackground.None).Horizontal();
+        consumablesBox.Add(OnScreenIcon(ResourcesLoader.ResourceToTex("DoubleScoreIcon")).BindVisibility(Consumables.IsDoubleScore));
+        consumablesBox.Add(OnScreenIcon(ResourcesLoader.ResourceToTex("FireSaleIcon")).BindVisibility(Consumables.IsFireSale));
+        consumablesBox.Add(OnScreenIcon(ResourcesLoader.ResourceToTex("ImperceptibleIcon")).BindVisibility(Consumables.IsImperceptible));
+        consumablesBox.Add(OnScreenIcon(ResourcesLoader.ResourceToTex("LockThemUpIcon")).BindVisibility(Consumables.IsLockThemUp));
+        HudPanel.Add(consumablesBox);
 
         // BottomRight
         var bottomRight = AxCreatePanel("BottomRight", false, new Vector2(600, 300), AnchorType.BottomRight, Color.black.WithAlpha(0));
@@ -78,6 +86,12 @@ public class HUD : MonoBehaviour
         bottomLeft.Add(perksCt);
         bottomLeft.Add(roundCt);
         HudPanel.Add(bottomLeft);
+    }
+
+    private static SContainerOptions OnScreenIcon(Texture icon)
+    {
+        return SContainer.Background(Color.black.WithAlpha(0), EBackground.None)
+            - SImage.Texture(icon).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).FlexHeight(1);
     }
 
     public static void DisableGameHud()

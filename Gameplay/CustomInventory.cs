@@ -21,7 +21,7 @@ public class CustomInventory : MonoBehaviour
     private List<ItemsId> _mainItems = new()
     {
         { ItemsId.CompactPistol },
-        { ItemsId.CombatKnife }
+        { ItemsId.CombatKnife },
     };
 
     private void Start()

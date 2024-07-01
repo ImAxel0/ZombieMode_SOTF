@@ -15,10 +15,14 @@
     <ItemGroup>
       <None Remove="Resources\Font\HeadlinerNo.45.ttf" />
       <None Remove="Resources\Images\closed-fist.png" />
+      <None Remove="Resources\Images\ConsumableIcons\DoubleScoreIcon.png" />
+      <None Remove="Resources\Images\ConsumableIcons\FireSaleIcon.png" />
+      <None Remove="Resources\Images\ConsumableIcons\ImperceptibleIcon.png" />
+      <None Remove="Resources\Images\ConsumableIcons\LockThemUpIcon.png" />
       <None Remove="Resources\Images\health-bar.png" />
       <None Remove="Resources\Images\ink-splatter.png" />
-      <None Remove="Resources\Images\Interact Icons\DoorIcon.png" />
-      <None Remove="Resources\Images\Interact Icons\MysteryBoxInteract.png" />
+      <None Remove="Resources\Images\InteractIcons\DoorIcon.png" />
+      <None Remove="Resources\Images\InteractIcons\MysteryBoxInteract.png" />
       <None Remove="Resources\Images\Overlays\DamageOverlay.png" />
       <None Remove="Resources\Images\Overlays\FlamesOverlay.png" />
       <None Remove="Resources\Images\Perks\heart.png" />
@@ -46,9 +50,13 @@
     <ItemGroup>
       <EmbeddedResource Include="Resources\Font\HeadlinerNo.45.ttf" />
       <EmbeddedResource Include="Resources\Images\closed-fist.png" />
+      <EmbeddedResource Include="Resources\Images\ConsumableIcons\DoubleScoreIcon.png" />
+      <EmbeddedResource Include="Resources\Images\ConsumableIcons\FireSaleIcon.png" />
+      <EmbeddedResource Include="Resources\Images\ConsumableIcons\ImperceptibleIcon.png" />
+      <EmbeddedResource Include="Resources\Images\ConsumableIcons\LockThemUpIcon.png" />
       <EmbeddedResource Include="Resources\Images\ink-splatter.png" />
-      <EmbeddedResource Include="Resources\Images\Interact Icons\DoorIcon.png" />
-      <EmbeddedResource Include="Resources\Images\Interact Icons\MysteryBoxInteract.png" />
+      <EmbeddedResource Include="Resources\Images\InteractIcons\DoorIcon.png" />
+      <EmbeddedResource Include="Resources\Images\InteractIcons\MysteryBoxInteract.png" />
       <EmbeddedResource Include="Resources\Images\Overlays\DamageOverlay.png" />
       <EmbeddedResource Include="Resources\Images\Overlays\FlamesOverlay.png" />
       <EmbeddedResource Include="Resources\Images\Perks\heart.png" />

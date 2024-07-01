@@ -1,7 +1,7 @@
 ﻿using SUI;
 using TMPro;
 using UnityEngine;
-using static ZombieMode.UI.AXSUI;
+using static ZombieMode.Libs.AXSUI;
 
 namespace ZombieMode.Core;
 

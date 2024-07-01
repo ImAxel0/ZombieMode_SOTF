@@ -3,7 +3,7 @@ using SUI;
 using TheForest.Utils;
 using UnityEngine;
 using static SUI.SUI;
-using static ZombieMode.UI.AXSUI;
+using static ZombieMode.Libs.AXSUI;
 using RedLoader;
 using ZombieMode.Libs;
 
@@ -56,12 +56,6 @@ public class Overlays : MonoBehaviour
                 return;
         }
         image = null; time = 0;
-    }
-
-    public static void KillOverlay(OverlayTypes overlay)
-    {
-        GetOverlayInfo(overlay, out var image, out var time);
-        image.ImageObject.CrossFadeAlpha(0, 0, false);
     }
 
     public static void KillAll()

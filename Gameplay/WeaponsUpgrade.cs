@@ -10,7 +10,6 @@ using ZombieMode.Core;
 
 namespace ZombieMode.Gameplay;
 
-
 public class WeaponsUpgrade
 {
     [HarmonyPatch(typeof(RangedWeaponController), nameof(RangedWeaponController.Update))]
@@ -31,7 +30,7 @@ public class WeaponsUpgrade
 
     public class PistolUpgrade
     {
-        public static bool IsUpgraded = true;
+        public static bool IsUpgraded;
         static SonsFMODEventEmitter _fmodEmitter;
 
         public static void OnTriggerShotFiredAudio(ref CompactPistolWeaponController __instance)
@@ -61,7 +60,7 @@ public class WeaponsUpgrade
                 return;
             }
             __instance._gunShotAudioEvent = "event:/SotF Events/player sounds/Weapons/PistolTactical/PistolTacticalFire";
-            __instance._muzzleFlashInstance.gameObject.SetActive(true);
+            __instance._muzzleFlashInstance?.gameObject?.SetActive(true);
         }
 
         public static void Update(RangedWeaponController __instance)
@@ -70,13 +69,16 @@ public class WeaponsUpgrade
                 _fmodEmitter = __instance.gameObject.AddComponent<SonsFMODEventEmitter>();
 
             UpgradeFx(__instance, IsUpgraded);
-            _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
+            if (IsUpgraded)
+            {
+                _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
+            }
         }
     }
 
     public class ShotgunUpgrade
     {
-        public static bool IsUpgraded = true;
+        public static bool IsUpgraded;
         static SonsFMODEventEmitter _fmodEmitter;
 
         public static void OnTriggerShotFiredAudio(ref ShotgunWeaponController __instance)
@@ -106,7 +108,7 @@ public class WeaponsUpgrade
                 return;
             }
             __instance._gunShotAudioEvent = "event:/SotF Events/player sounds/shotgun_combat";
-            __instance._muzzleFlashInstance.gameObject.SetActive(true);
+            __instance._muzzleFlashInstance?.gameObject?.SetActive(true);
         }
 
         public static void Update(RangedWeaponController __instance)
@@ -115,7 +117,10 @@ public class WeaponsUpgrade
                 _fmodEmitter = __instance.gameObject.AddComponent<SonsFMODEventEmitter>();
 
             UpgradeFx(__instance, IsUpgraded);
-            _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
+            if (IsUpgraded)
+            {
+                _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
+            }
         }
     }
 }

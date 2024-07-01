@@ -8,7 +8,7 @@ using RedLoader;
 using Input = UnityEngine.Input;
 using static SUI.SUI;
 
-namespace ZombieMode.UI;
+namespace ZombieMode.Libs;
 
 public class AXSUI
 {
@@ -1229,8 +1229,8 @@ public class AXSUI
     public static SPanelOptions AxCreateSidePanel(string id, bool canResize, string title, Side side, float hSize, Color? color = null, EBackground style = EBackground.None, bool enableInput = true)
     {
         color ??= Color.black.WithAlpha(0.92f);
-        AnchorType anchorType = (side == Side.Left) ? AnchorType.TopLeft : AnchorType.TopRight;
-        var pos = (anchorType == AnchorType.TopLeft) ? new Vector2(0, -0) : new Vector2(-hSize, -0);
+        AnchorType anchorType = side == Side.Left ? AnchorType.TopLeft : AnchorType.TopRight;
+        var pos = anchorType == AnchorType.TopLeft ? new Vector2(0, -0) : new Vector2(-hSize, -0);
 
         var sidePanel = RegisterNewPanel(id, enableInput)
             .Pivot(0, 0)

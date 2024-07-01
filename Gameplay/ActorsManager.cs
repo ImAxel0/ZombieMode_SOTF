@@ -16,6 +16,14 @@ public class ActorsManager
         VailActorManager.ClearAll();
     }
 
+    public static void KillAllEnemies()
+    {
+        VailActorManager.GetActiveActors()
+            .Where(actor => !actor.IsDead())
+            .ToList()
+            .ForEach(actor => actor.ForceDeath());
+    }
+
     public static void PreventSpawn()
     {
         foreach (var spawner in VailWorldSimulation._instance._vailSpawners)
@@ -44,6 +52,11 @@ public class ActorsManager
         if (Consumables.ScoreBuffer >= Consumables.DropEveryScore && Consumables.DropsBuffer < Consumables.MaxRoundDrops)
         {
             Consumables.SpawnRandConsumable(deadActor).RunCoro();
+        }
+
+        if (killedByPlayer)
+        {
+            ScoreSystem.PlayerKills++;
         }
     }
 

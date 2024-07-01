@@ -66,6 +66,34 @@ public static class NukeConsumableGo
     public static GameObject NukeConsumable { get; set; }
 }
 
+[AssetBundle("firesaleconsumable")]
+public static class FireSaleConsumableGo
+{
+    [AssetReference("FireSaleConsumable")]
+    public static GameObject FireSaleConsumable { get; set; }
+}
+
+[AssetBundle("imperceptibleconsumable")]
+public static class ImperceptibleConsumableGo
+{
+    [AssetReference("ImperceptibleConsumable")]
+    public static GameObject ImperceptibleConsumable { get; set; }
+}
+
+[AssetBundle("lockthemupconsumable")]
+public static class LockThemUpConsumableGo
+{
+    [AssetReference("LockThemUpConsumable")]
+    public static GameObject LockThemUpConsumable { get; set; }
+}
+
+[AssetBundle("doublescoreconsumable")]
+public static class DoubleScoreConsumableGo
+{
+    [AssetReference("DoubleScoreConsumable")]
+    public static GameObject DoubleScoreConsumable { get; set; }
+}
+
 [AssetBundle("menuvideo")]
 public static class MenuVideoGo
 {
@@ -106,4 +134,11 @@ public static class LavaFloorMat
 {
     [AssetReference("LavaFloor")]
     public static GameObject LavaFloor { get; set; }
+}
+
+[AssetBundle("forge")]
+public static class ForgeGo
+{
+    [AssetReference("Forge")]
+    public static GameObject Forge { get; set; }
 }

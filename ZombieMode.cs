@@ -1,6 +1,8 @@
 ﻿using RedLoader;
 using RedLoader.Utils;
+using Sons.Ai.Vail;
 using SonsSdk;
+using TheForest.Utils;
 using UnityEngine;
 using ZombieMode.Core;
 using ZombieMode.Gameplay;
@@ -40,10 +42,13 @@ public class ZombieMode : SonsMod
 
     public static void Update()
     {
+#if DEBUG
         if (Input.GetKeyDown(KeyCode.H))
         {
-            //UnityEngine.Object.Instantiate(LavaTerrainMat.LavaTerrain, LocalPlayer.HeadTr.position + LocalPlayer.MainCamTr.forward * 2, Quaternion.identity);
-        }
+
+        }  
+#endif
+
     }
 
     protected override void OnSonsSceneInitialized(ESonsScene sonsScene)
@@ -63,10 +68,5 @@ public class ZombieMode : SonsMod
             InstallerUi.InstallerPanel.Active(false);
             ZMainMenu.SonsPanel.Active(false);
         }
-    }
-
-    protected override void OnGameStart()
-    {
-
     }
 }

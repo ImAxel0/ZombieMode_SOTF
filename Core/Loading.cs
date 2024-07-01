@@ -8,7 +8,7 @@ using UnityEngine;
 using ZombieMode.Gameplay;
 using ZombieMode.Libs;
 using static SUI.SUI;
-using static ZombieMode.UI.AXSUI;
+using static ZombieMode.Libs.AXSUI;
 
 namespace ZombieMode.Core;
 
@@ -20,7 +20,7 @@ public class Loading
 
     public static void UiCreate()
     {
-        LoadingPanel = AxCreateFillPanel("LoadingPanel", Color.black.WithAlpha(0)).OverrideSorting(100).Active(false)
+        LoadingPanel = AxCreateFillPanel("LoadingPanel", Color.black.WithAlpha(0)).OverrideSorting(101).Active(false)
             - SImage.Dock(EDockType.Fill).Texture(ResourcesLoader.ResourceToTex("ZombieModeLoading"));
 
         var progressContainer = SContainer.Dock(EDockType.Bottom).Background(Color.black, EBackground.None).Horizontal(0, "CX").Height(50).Position(null, 80);

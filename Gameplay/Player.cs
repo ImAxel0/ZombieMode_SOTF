@@ -9,6 +9,7 @@ using TheForest;
 using ZombieMode.Libs;
 using Sons.Ai.Vail;
 using TheForest.Items.Inventory;
+using Sons.Items;
 
 namespace ZombieMode.Gameplay;
 

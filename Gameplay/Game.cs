@@ -11,6 +11,7 @@ using Sons.Weapon;
 using ZombieMode.Libs;
 using ZombieMode.UI;
 using ZombieMode.Core;
+using Sons.Items;
 
 namespace ZombieMode.Gameplay;
 
@@ -38,12 +39,14 @@ public class Game : MonoBehaviour
         LocalPlayer._instance.gameObject.AddComponent<Game>();
         LocalPlayer._instance.gameObject.AddComponent<ScoreSystem>();
         LocalPlayer._instance.gameObject.AddComponent<MysteryBoxController>();
+        LocalPlayer._instance.gameObject.AddComponent<ForgeController>();
         LocalPlayer._instance.gameObject.AddComponent<DoorsManager>();
         LocalPlayer._instance.gameObject.AddComponent<WallItems>();
         LocalPlayer._instance.gameObject.AddComponent<Consumables>();
         LocalPlayer._instance.gameObject.AddComponent<SceneMaterialsSwap>();
         LocalPlayer._instance.gameObject.AddComponent<HUD>();
         LocalPlayer._instance.gameObject.AddComponent<Overlays>();
+        ZombieConsole.SilentInput().RunCoro();
 
         ZombieMode.HarmonyInst.Patch(AccessTools.Method(typeof(VailActor), nameof(VailActor.UpdateDamageTakenStats)),
             new HarmonyMethod(typeof(ScoreSystem), nameof(ScoreSystem.DamageToScore)));

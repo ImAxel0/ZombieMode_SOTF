@@ -2,7 +2,7 @@
 using UnityEngine;
 using SUI;
 using static SUI.SUI;
-using static ZombieMode.UI.AXSUI;
+using static ZombieMode.Libs.AXSUI;
 using SonsSdk;
 using TMPro;
 using UnityEngine.SceneManagement;

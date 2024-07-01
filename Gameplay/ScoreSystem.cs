@@ -3,6 +3,7 @@ using RedLoader;
 using SUI;
 using Sons.Ai.Vail;
 using TheForest.Utils;
+using ZombieMode.UI;
 
 namespace ZombieMode.Gameplay;
 
@@ -10,16 +11,23 @@ namespace ZombieMode.Gameplay;
 public class ScoreSystem : MonoBehaviour
 {
     public static Observable<int> Score = new(10000);
+    public static Observable<string> StringScore = new(string.Empty);
+    public static int ScoreMultiplier { get; set; } = 1;
+    public static float SaleMultiplier { get; set; } = 1f;
+
+    public static int PlayerKills;
+    public static Observable<string> StringPlayerKills = new(string.Empty);
 
     public static void AddScore(int amount)
     {
+        amount *= ScoreMultiplier;
         Consumables.ScoreBuffer += amount;
         Score.Value += amount;
     }
 
     public static void DecScore(int amount)
     {
-        Score.Value -= amount;
+        Score.Value -= (int)(amount * SaleMultiplier);
     }
 
     public static void DamageToScore(ref MonoBehaviourStimuli sourceStimuli, ref float damage)
@@ -32,6 +40,16 @@ public class ScoreSystem : MonoBehaviour
 
     public void Update()
     {
+        StringScore.Set($"Score <color=yellow>{Score.Value} $</color>");
+        StringPlayerKills.Set($"Kills <color=red>{PlayerKills}</color>");
 
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Scoreboard.Show(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            Scoreboard.Show(false);
+        }
     }
 }

@@ -5,6 +5,8 @@ using System.Collections;
 using System.Diagnostics;
 using System.Data;
 using ZombieMode.Core;
+using SUI;
+using TheForest;
 
 namespace ZombieMode.Gameplay;
 
@@ -13,6 +15,7 @@ public class Consumables : MonoBehaviour
 {
     public static Dictionary<GameObject, Action> ConsumablesPair = new();
     static GameObject _spawnedConsumable;
+    static float _consumablesDuration = 30f;
     static float _timeToFade = 15f;
     static bool _wasPickedUp;
 
@@ -21,10 +24,20 @@ public class Consumables : MonoBehaviour
     public static int ScoreBuffer;
     public static int DropsBuffer;
 
+    public static Observable<bool> IsDoubleScore = new(false);
+    public static Observable<bool> IsFireSale = new(false);
+    public static Observable<bool> IsImperceptible = new(false);
+    public static Observable<bool> IsLockThemUp = new(false);
+    public static Observable<bool> IsSlowThemDown = new(false);
+
     public void Start()
     {
         ConsumablesPair.Clear();
         ConsumablesPair.Add(NukeConsumableGo.NukeConsumable, ConsumablesController.DoNuke);
+        ConsumablesPair.Add(FireSaleConsumableGo.FireSaleConsumable, () => ConsumablesController.DoFireSale().RunCoro());
+        ConsumablesPair.Add(ImperceptibleConsumableGo.ImperceptibleConsumable, () => ConsumablesController.DoImperceptible().RunCoro());
+        ConsumablesPair.Add(LockThemUpConsumableGo.LockThemUpConsumable, () => ConsumablesController.DoLockThemUp().RunCoro());
+        ConsumablesPair.Add(DoubleScoreConsumableGo.DoubleScoreConsumable, () => ConsumablesController.DoDoubleScore().RunCoro());
     }
 
     private static void UpdateStats()
@@ -74,14 +87,69 @@ public class Consumables : MonoBehaviour
             });
         }
 
+        public static IEnumerator DoDoubleScore()
+        {
+            IsDoubleScore.Value = true;
+            ScoreSystem.ScoreMultiplier = 2;
+            yield return new WaitForSeconds(_consumablesDuration);
+            ScoreSystem.ScoreMultiplier = 1;
+            IsDoubleScore.Value = false;
+        }
+
+        public static IEnumerator DoFireSale(float salePerc = 0.5f)
+        {
+            IsFireSale.Value = true;
+            ScoreSystem.SaleMultiplier = salePerc;
+            yield return new WaitForSeconds(_consumablesDuration);
+            ScoreSystem.SaleMultiplier = 1f;
+            IsFireSale.Value = false;
+        }
+
+        public static IEnumerator DoLockThemUp()
+        {
+            IsLockThemUp.Value = true;
+            VailWorldSimulation.SetPaused(true);
+            yield return new WaitForSeconds(_consumablesDuration);
+            VailWorldSimulation.SetPaused(false);
+            IsLockThemUp.Value = false;
+        }
+
+        public static IEnumerator DoImperceptible()
+        {
+            IsImperceptible.Value = true;
+            VailActorManager.SetGhostPlayer(true);
+            yield return new WaitForSeconds(_consumablesDuration);
+            VailActorManager.SetGhostPlayer(false);
+            IsImperceptible.Value = false;
+        }
+
         public void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
             {
                 _wasPickedUp = true;
-                if (ConsumablesPair.TryGetValue(ConsumablesPair.Keys.FirstOrDefault(x => x.tag == _spawnedConsumable.tag), out var Action))
+                switch (_spawnedConsumable.name)
                 {
-                    Action.Invoke();
+                    case "NukeConsumable(Clone)":
+                        ConsumablesPair.TryGetValue(NukeConsumableGo.NukeConsumable, out var _NukeConsumable);
+                        _NukeConsumable.Invoke();
+                        break;
+                    case "FireSaleConsumable(Clone)":
+                        ConsumablesPair.TryGetValue(FireSaleConsumableGo.FireSaleConsumable, out var _FireSaleConsumable);
+                        _FireSaleConsumable.Invoke();
+                        break;
+                    case "ImperceptibleConsumable(Clone)":
+                        ConsumablesPair.TryGetValue(ImperceptibleConsumableGo.ImperceptibleConsumable, out var _ImperceptibleConsumable);
+                        _ImperceptibleConsumable.Invoke();
+                        break;
+                    case "LockThemUpConsumable(Clone)":
+                        ConsumablesPair.TryGetValue(LockThemUpConsumableGo.LockThemUpConsumable, out var _LockThemUpConsumable);
+                        _LockThemUpConsumable.Invoke();
+                        break;
+                    case "DoubleScoreConsumable(Clone)":
+                        ConsumablesPair.TryGetValue(DoubleScoreConsumableGo.DoubleScoreConsumable, out var _DoubleScoreConsumable);
+                        _DoubleScoreConsumable.Invoke();
+                        break;
                 }
             }
         }
