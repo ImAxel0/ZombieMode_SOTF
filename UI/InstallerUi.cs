@@ -30,8 +30,7 @@ public class InstallerUi : MonoBehaviour
         var mainInstaller = AxCreateMenuPanel("InstallerPanel", false, false, "ZombieMode Installer", new Vector2(1000, 500), AnchorType.MiddleCenter, new Color32(32, 32, 32, 255), EBackground.None)
         .OverrideSorting(200);
 
-        Font font = new Font(@"C:\Users\Alex\Downloads\HeadlinerNo.45.ttf");
-        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(font);
+        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(UiManager.Headliner45);
 
         AxGetMenuTitle((SPanelOptions)mainInstaller).Font(font_asset).FontColor(Color.red.WithAlpha(0.7f));
 

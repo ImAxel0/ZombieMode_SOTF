@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RedLoader;
-using TheForest.Items.Inventory;
+﻿using RedLoader;
 using TheForest.Utils;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.IO;
-using ZombieMode.Helpers;
 using static ZombieMode.Helpers.ItemsIdManager;
 
 namespace ZombieMode.Gameplay;

@@ -1,5 +1,4 @@
 ﻿using FMODCustom;
-using Sons.Settings;
 using SonsSdk;
 using UnityEngine;
 using ZombieMode.Core;

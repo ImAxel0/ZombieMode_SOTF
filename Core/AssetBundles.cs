@@ -94,6 +94,27 @@ public static class DoubleScoreConsumableGo
     public static GameObject DoubleScoreConsumable { get; set; }
 }
 
+[AssetBundle("healthcola")]
+public static class HealthColaGo
+{
+    [AssetReference("HealthCola")]
+    public static GameObject HealthCola { get; set; }
+}
+
+[AssetBundle("rushcola")]
+public static class RushColaGo
+{
+    [AssetReference("RushCola")]
+    public static GameObject RushCola { get; set; }
+}
+
+[AssetBundle("jumpcola")]
+public static class JumpColaGo
+{
+    [AssetReference("JumpCola")]
+    public static GameObject JumpCola { get; set; }
+}
+
 [AssetBundle("menuvideo")]
 public static class MenuVideoGo
 {

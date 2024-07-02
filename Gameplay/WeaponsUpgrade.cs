@@ -28,6 +28,19 @@ public class WeaponsUpgrade
         }
     }
 
+    public static bool IsWeaponUpgraded(ItemsIdManager.ItemsId itemId)
+    {
+        switch (itemId)
+        {
+            case ItemsIdManager.ItemsId.CompactPistol:
+                return PistolUpgrade.IsUpgraded;
+            case ItemsIdManager.ItemsId.ShotgunPumpAction:
+                return ShotgunUpgrade.IsUpgraded;
+            default:
+                return false;
+        }
+    }
+
     public class PistolUpgrade
     {
         public static bool IsUpgraded;
@@ -71,6 +84,7 @@ public class WeaponsUpgrade
             UpgradeFx(__instance, IsUpgraded);
             if (IsUpgraded)
             {
+                __instance.GetItemData().AmmoDamageMult = 2f;
                 _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
             }
         }
@@ -119,6 +133,7 @@ public class WeaponsUpgrade
             UpgradeFx(__instance, IsUpgraded);
             if (IsUpgraded)
             {
+                __instance.GetItemData().AmmoDamageMult = 2f;
                 _fmodEmitter.instance.set3DAttributes(__instance.gameObject.transform.position.To3DAttributes());
             }
         }

@@ -30,8 +30,7 @@ public class HUD : MonoBehaviour
 
     public static void UiCreate()
     {
-        Font font = new Font(@"C:\Users\Alex\Downloads\HeadlinerNo.45.ttf");
-        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(font);
+        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(UiManager.Headliner45);
 
         HudPanel = AxCreateFillPanel("ZombieModeHud", Color.black.WithAlpha(0)).Active(false).OverrideSorting(200);
 
@@ -71,13 +70,14 @@ public class HUD : MonoBehaviour
         var bottomLeft = AxCreatePanel("BottomLeft", false, new Vector2(250, 300), AnchorType.BottomLeft, Color.black.WithAlpha(0)).Vertical(20, "EX");
 
         var perksCt = SContainer.Dock(EDockType.Fill).Background(Color.black.WithAlpha(0), EBackground.None).Height(50).Horizontal(0, "EE").PaddingHorizontal(5)
-            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("heart"))
-            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("running"))
-            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("MysteryBoxInteract"))
-            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("MysteryBoxInteract"))
-            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("MysteryBoxInteract"));
+            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("HealthColaIcon"))
+            .BindVisibility(PerksManager.HasHealthCola)
+            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("RushColaIcon"))
+            .BindVisibility(PerksManager.HasRushCola)
+            - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("JumpColaIcon"))
+            .BindVisibility(PerksManager.HasJumpCola);
 
-        perksCt.Root.GetChildren().ForEach(x => x.GetComponent<RawImage>().color = Color.white.WithAlpha(0.8f));
+        perksCt.Root.GetChildren().ForEach(x => x.GetComponent<RawImage>().color = Color.white.WithAlpha(0.5f));
 
         var roundCt = SContainer.Dock(EDockType.Fill).Background(Color.black.WithAlpha(0), EBackground.None).Height(200);
         _roundText = AxTextDynamic(RoundInfo, 180).FontColor(Color.red.WithAlpha(0.5f)).Font(font_asset);
@@ -90,8 +90,11 @@ public class HUD : MonoBehaviour
 
     private static SContainerOptions OnScreenIcon(Texture icon)
     {
-        return SContainer.Background(Color.black.WithAlpha(0), EBackground.None)
-            - SImage.Texture(icon).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).FlexHeight(1);
+        var ct = SContainer.Background(Color.black.WithAlpha(0), EBackground.None);
+        var _icon = SImage.Texture(icon).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).FlexHeight(1);
+        _icon.ImageObject.color = Color.white.WithAlpha(0.5f);
+        ct.Add(_icon);
+        return ct;
     }
 
     public static void DisableGameHud()

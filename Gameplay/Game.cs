@@ -11,7 +11,6 @@ using Sons.Weapon;
 using ZombieMode.Libs;
 using ZombieMode.UI;
 using ZombieMode.Core;
-using Sons.Items;
 
 namespace ZombieMode.Gameplay;
 
@@ -30,6 +29,8 @@ public class Game : MonoBehaviour
     public static Observable<int> Round = new(1);
     public static Observable<int> Enemies = new(0);
 
+    static SonsFMODEventEmitter _fmodEmitter = new();
+
     public static void InitGame()
     {
         GameState = GameStates.InGame;
@@ -42,6 +43,7 @@ public class Game : MonoBehaviour
         LocalPlayer._instance.gameObject.AddComponent<ForgeController>();
         LocalPlayer._instance.gameObject.AddComponent<DoorsManager>();
         LocalPlayer._instance.gameObject.AddComponent<WallItems>();
+        LocalPlayer._instance.gameObject.AddComponent<VendingMachines>();
         LocalPlayer._instance.gameObject.AddComponent<Consumables>();
         LocalPlayer._instance.gameObject.AddComponent<SceneMaterialsSwap>();
         LocalPlayer._instance.gameObject.AddComponent<HUD>();
@@ -74,6 +76,9 @@ public class Game : MonoBehaviour
         //DebugConsole.Instance._godmode("on");
         GameObject.Find("SpaMusicGroup").SetActive(false);
         GameObject.Find("GymMusicGroup").SetActive(false);
+        GameObject.Find("BunkerAll/Gyms/BE_GymA_Baked/SETDRESSING/ParlorPalmALOD0").SetActive(false);
+        GameObject.Find("BunkerAll/Gyms/BE_GymA_Baked/SETDRESSING/ParlorPalmALOD0 (2)").SetActive(false);
+        GameObject.Find("BunkerAll/Gyms/BE_GymA_Baked/SETDRESSING/MonsteraPlantALOD0").SetActive(false);
         ActorsManager.PreventSpawn();
         LocalPlayer.Inventory.UnequipItemAtSlot(EquipmentSlot.RightHand, false, true, false);
         LocalPlayer.Inventory.UnequipItemAtSlot(EquipmentSlot.LeftHand, false, true, false);
@@ -109,6 +114,7 @@ public class Game : MonoBehaviour
         IncRound();
         Consumables.UpdateNewRound();
         SpawnSystem.BeginSpawnEnemies().RunCoro();
+        AudioController.PlayBSound(_fmodEmitter, "event:/Game/start", AudioController.SoundType.Sfx);
     }
 
     public void Update()

@@ -1,11 +1,6 @@
 ﻿using Sons.Ai.Vail;
 using SonsSdk;
 using SUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheForest.Utils;
 using TheForest;
 using UnityEngine.Rendering.HighDefinition;
@@ -97,6 +92,7 @@ public class ZombieConsole : MonoBehaviour
         {
             method?.Invoke(methodName, new object[] { "" });
         }
+        ToggleZombieConsole();
     }
 
     public static List<string> GetAvailableCommands()
@@ -357,7 +353,7 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("givejuggernog")}");
             return;
         }
-        //PerksManagement.GiveHealthCola().RunCoro();
+        PerksManager.GiveHealthCola().RunCoro();
         SonsTools.ShowMessage($"Ran command {Com("givejuggernog")}");
     }
 
@@ -368,7 +364,7 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("giverush")}");
             return;
         }
-        //PerksManagement.GiveRushCola().RunCoro();
+        PerksManager.GiveRushCola().RunCoro();
         SonsTools.ShowMessage($"Ran command {Com("giverush")}");
     }
 
@@ -379,7 +375,7 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("givesuperjump")}");
             return;
         }
-        //PerksManagement.GiveJumpCola().RunCoro();
+        PerksManager.GiveJumpCola().RunCoro();
         SonsTools.ShowMessage($"Ran command {Com("givesuperjump")}");
     }
 
@@ -390,9 +386,9 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("giveallperks")}");
             return;
         }
-        //PerksManagement.GiveHealthCola().RunCoro();
-        //PerksManagement.GiveRushCola().RunCoro();
-        //PerksManagement.GiveJumpCola().RunCoro();
+        PerksManager.GiveHealthCola().RunCoro();
+        PerksManager.GiveRushCola().RunCoro();
+        PerksManager.GiveJumpCola().RunCoro();
         SonsTools.ShowMessage($"Ran command {Com("giveallperks")}");
     }
 
@@ -403,9 +399,9 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("removeallperks")}");
             return;
         }
-        //PerksManagement.HasHealthCola.Value = false;
-        //PerksManagement.HasRushCola.Value = false;
-        //PerksManagement.HasJumpCola.Value = false;
+        PerksManager.HasHealthCola.Value = false;
+        PerksManager.HasRushCola.Value = false;
+        PerksManager.HasJumpCola.Value = false;
         SonsTools.ShowMessage($"Ran command {Com("removeallperks")}");
     }
 
@@ -420,13 +416,13 @@ public class ZombieConsole : MonoBehaviour
         switch (perkName)
         {
             case "healthcola":
-                //PerksManagement.HasHealthCola.Value = false;
+                PerksManager.HasHealthCola.Value = false;
                 break;
             case "rushcola":
-                //PerksManagement.HasRushCola.Value = false;
+                PerksManager.HasRushCola.Value = false;
                 break;
             case "jumpcola":
-                //PerksManagement.HasJumpCola.Value = false;
+                PerksManager.HasJumpCola.Value = false;
                 break;
             default:
                 SonsTools.ShowMessage($"{perkName} is not a valid perk name");
@@ -529,10 +525,10 @@ public class ZombieConsole : MonoBehaviour
         RaycastHit hitSpawn;
         if (Physics.Raycast(mainCam.position, mainCam.forward, out hitSpawn, 10f))
         {
-            /*VendingMachines.HealthCola = UnityEngine.Object.Instantiate(
-                AssetLoader.gameObjects.Find(x => x.name == "HealthCola(Clone)"),
+            VendingMachines.HealthCola = UnityEngine.Object.Instantiate(
+                HealthColaGo.HealthCola,
                 hitSpawn.point + Vector3.forward * 10f,
-                Quaternion.identity);*/
+                Quaternion.identity);
         }
         SonsTools.ShowMessage($"Ran command {Com("debugspawnhealthcola")}");
     }
@@ -549,10 +545,10 @@ public class ZombieConsole : MonoBehaviour
         RaycastHit hitSpawn;
         if (Physics.Raycast(mainCam.position, mainCam.forward, out hitSpawn, 10f))
         {
-            /*VendingMachines.RushCola = UnityEngine.Object.Instantiate(
-                AssetLoader.gameObjects.Find(x => x.name == "RushCola(Clone)"),
+            VendingMachines.RushCola = UnityEngine.Object.Instantiate(
+                RushColaGo.RushCola,
                 hitSpawn.point + Vector3.forward * 10f,
-                Quaternion.identity);*/
+                Quaternion.identity);
         }
         SonsTools.ShowMessage($"Ran command {Com("debugspawnrushcola")}");
     }
@@ -569,10 +565,10 @@ public class ZombieConsole : MonoBehaviour
         RaycastHit hitSpawn;
         if (Physics.Raycast(mainCam.position, mainCam.forward, out hitSpawn, 10f))
         {
-            /*VendingMachines.JumpCola = UnityEngine.Object.Instantiate(
-                AssetLoader.gameObjects.Find(x => x.name == "JumpCola(Clone)"),
+            VendingMachines.JumpCola = UnityEngine.Object.Instantiate(
+                JumpColaGo.JumpCola,
                 hitSpawn.point + Vector3.forward * 10f,
-                Quaternion.identity);*/
+                Quaternion.identity);
         }
         SonsTools.ShowMessage($"Ran command {Com("debugspawnjumpcola")}");
     }
@@ -639,7 +635,7 @@ public class ZombieConsole : MonoBehaviour
         SonsTools.ShowMessage($"Ran command {Com("turnpoweron")}");
     }
 
-    public static void ToggleSurvivalConsole()
+    public static void ToggleZombieConsole()
     {
         Command.Value = "";
         ShowConsole = !ShowConsole;
@@ -656,7 +652,7 @@ public class ZombieConsole : MonoBehaviour
         if (!IsActive) return;
 
         if (Input.GetKeyDown(KeyCode.F4))
-            ToggleSurvivalConsole();
+            ToggleZombieConsole();
 
         if (ShowConsole)
         {

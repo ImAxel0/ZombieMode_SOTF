@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Data;
 using ZombieMode.Core;
 using SUI;
-using TheForest;
 
 namespace ZombieMode.Gameplay;
 
@@ -132,6 +131,7 @@ public class Consumables : MonoBehaviour
                 {
                     case "NukeConsumable(Clone)":
                         ConsumablesPair.TryGetValue(NukeConsumableGo.NukeConsumable, out var _NukeConsumable);
+                        ScoreSystem.AddScore(ActorsManager.GetEnemiesAlive() * 100);
                         _NukeConsumable.Invoke();
                         break;
                     case "FireSaleConsumable(Clone)":

@@ -1,4 +1,5 @@
-﻿using Sons.Ai.Vail;
+﻿using RedLoader;
+using Sons.Ai.Vail;
 using Sons.Gui;
 using Sons.Save;
 using SonsSdk;
@@ -18,10 +19,28 @@ public class Loading
     public static Observable<string> LoadingInfo = new("");
     public static Observable<float> LoadingProgress = new(0);
 
+    private static Observable<string> _currentTip = new("");
+    private static string[] _loadingTips = { 
+        "Buy <color=yellow>perks</color> at the vending machines to increase your chance of surviving",
+        "Exchange points for a random weapon at the <color=yellow>MysteryBox</color>",
+        "Upgrade your weapons at the <color=yellow>Forge</color>",
+        "Unlock doors to to discover new areas",
+        "Buy items on walls for points",
+        "Enemies have a random chance of dropping a <color=yellow>consumable</color> when killed",
+        "Stay away from the lava",
+        "Take headshots to gain more points",
+    };
+
     public static void UiCreate()
     {
         LoadingPanel = AxCreateFillPanel("LoadingPanel", Color.black.WithAlpha(0)).OverrideSorting(101).Active(false)
             - SImage.Dock(EDockType.Fill).Texture(ResourcesLoader.ResourceToTex("ZombieModeLoading"));
+
+        _currentTip.Value = _loadingTips[UnityEngine.Random.Range(0, _loadingTips.Length)];
+        var tipsContainer = SContainer.Dock(EDockType.Bottom).Background(Color.black.WithAlpha(1), EBackground.Sons).Height(50).Position(null, 200)
+                            - AxTextDynamic(_currentTip, 40);
+
+        LoadingPanel.Add(tipsContainer);
 
         var progressContainer = SContainer.Dock(EDockType.Bottom).Background(Color.black, EBackground.None).Horizontal(0, "CX").Height(50).Position(null, 80);
 
@@ -59,6 +78,7 @@ public class Loading
             yield return null;
         }
 
+        ChangeTip(loading).RunCoro();
         while (loading._lastAmount < 0.99f)
         {
             LoadingInfo.Set("Loading scene...");
@@ -72,5 +92,19 @@ public class Loading
             yield return null;
         }
         Game.OnSpawn();
+    }
+
+    private static IEnumerator ChangeTip(SceneLoadingIndicator loading)
+    {
+        while (loading != null)
+        {
+            yield return new WaitForSeconds(6f);
+            var lastTip = _currentTip.Value;
+            _currentTip.Value = _loadingTips[UnityEngine.Random.Range(0, _loadingTips.Length)];
+            if (lastTip == _currentTip.Value)
+            {
+                _currentTip.Value = _loadingTips[UnityEngine.Random.Range(0, _loadingTips.Length)];
+            }
+        }
     }
 }

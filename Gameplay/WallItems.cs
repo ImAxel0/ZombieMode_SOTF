@@ -68,12 +68,18 @@ public class WallItems : MonoBehaviour
                 {
                     if (LocalPlayer.Inventory.Owns((int)pair.Key))
                     {
+                        LocalPlayer.Sfx.PlayRemove();
                         SonsTools.ShowMessage("You already own this item");
                         break;
                     }
                     BuyItem(pair.Key, pair.Value.Item2);
                 }
-                else if (pair.Value.Item1.IsActive) SonsTools.ShowMessage($"Needs <color=yellow>{pair.Value.Item2}</color> to buy");
+                else if (pair.Value.Item1.IsActive)
+                {
+                    LocalPlayer.Sfx.PlayRemove();
+                    SonsTools.ShowMessage($"Needs <color=yellow>{pair.Value.Item2}</color> to buy");
+                }
+                    
             }
         }
     }

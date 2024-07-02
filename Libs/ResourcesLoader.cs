@@ -55,4 +55,21 @@ public class ResourcesLoader
         sprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         return sprite;
     }
+
+    public static Font LoadEmbeddedFont(string resourceName)
+    {
+        if (TryGetEmbeddedResourceBytes(resourceName, out byte[] bytes))
+        {
+            byte[] fontData = bytes;
+            string tempFilePath = Path.Combine(Application.persistentDataPath, $"{Guid.NewGuid()}.ttf");
+            File.WriteAllBytes(tempFilePath, fontData);
+
+            Font customFont = new Font(tempFilePath);
+
+            File.Delete(tempFilePath);
+
+            return customFont;
+        }
+        return null;
+    }
 }

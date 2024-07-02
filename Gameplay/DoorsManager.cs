@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using SonsSdk;
 using ZombieMode.Libs;
 using ZombieMode.Core;
+using TheForest.Utils;
 
 namespace ZombieMode.Gameplay;
 
@@ -16,6 +17,8 @@ public class DoorsManager : MonoBehaviour
     public static Dictionary<LinkUiElement, int> UiCost = new();
 
     public static float _interactionDistance = 2f;
+
+    private static SonsFMODEventEmitter _fmodEmitter = new();
 
     public void Start()
     {
@@ -65,8 +68,13 @@ public class DoorsManager : MonoBehaviour
                         UiCost.Remove(pair.Key);
                         pair.Key.transform.root.gameObject.SetActive(false);
                         ScoreSystem.DecScore(pair.Value);
+                        AudioController.PlayBSound(_fmodEmitter, "event:/Buying/door-open", AudioController.SoundType.Sfx);
                     }
-                    else SonsTools.ShowMessage($"Needs <color=yellow>{pair.Value}</color> score to open");
+                    else
+                    {
+                        LocalPlayer.Sfx.PlayRemove();
+                        SonsTools.ShowMessage($"Needs <color=yellow>{pair.Value}</color> score to open");
+                    }                  
                 }
             }
         }

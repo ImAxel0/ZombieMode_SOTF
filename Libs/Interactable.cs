@@ -8,6 +8,7 @@ namespace ZombieMode.Libs;
 public class Interactable
 {
     private static Func<GameObject, LinkUiElement> _getUIElement = InteractionElement => InteractionElement.GetComponentInChildren<LinkUiElement>();
+    public static Func<GameObject, LinkUiElement> GetUiElement { get { return _getUIElement; } }
 
     public enum InteractableType
     {

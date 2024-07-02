@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheForest.Utils;
+﻿using TheForest.Utils;
 using UnityEngine;
 using ZombieMode.Helpers;
 using RedLoader;
 using Sons.Gui.Input;
 using ZombieMode.Core;
-using UnityEngine.InputSystem.XR;
 using ZombieMode.Libs;
 using SonsSdk;
 using Sons.Input;
 using TheForest.Items.Utils;
 using Sons.Items.Core;
 using System.Collections;
-using System.Diagnostics;
+using static ZombieMode.Helpers.ItemsIdManager;
 
 namespace ZombieMode.Gameplay;
 
@@ -27,23 +21,32 @@ public class ForgeController : MonoBehaviour
     static LinkUiElement _uiElement;
     public static int NeededScore = 4000;
     static Animator _controller;
+    static bool _isUpgrading;
+
+    static List<ItemsId> _forgeableItems = new()
+    {
+        { ItemsId.CompactPistol },
+        { ItemsId.ShotgunPumpAction },
+    };
 
     private void Start()
     {
         ForgeObject = Instantiate(ForgeGo.Forge,
-            new Vector3(-1100.2f, 59, 20),
-            Quaternion.Euler(0, 0, 0));
+            new Vector3(-1160.706f, 58.7f, 37.696f),
+            Quaternion.Euler(0, 9, 0));
 
-        _uiElement = Interactable.Create(ForgeObject, 2f, Interactable.InteractableType.Open, ResourcesLoader.ResourceToTex("MysteryBoxInteract"));
+        ForgeObject.GetComponentInChildren<Light>().intensity = 67899;
+        _uiElement = Interactable.Create(ForgeObject, 2f, Interactable.InteractableType.Open, ResourcesLoader.ResourceToTex("WeaponUpgradeIcon"));
         _controller = ForgeObject.GetComponentInChildren<Animator>();
     }
 
     private IEnumerator UpgradeWeapon(int itemId)
     {
+        _isUpgrading = true;
         _uiElement.gameObject.SetActive(false);
         var itemData = ItemDatabaseManager.ItemById(itemId);
         LocalPlayer.Inventory.RemoveItem(itemId);
-        var spawnedItem = Instantiate(itemData.PropPrefab, ForgeObject.transform.Find("WeaponPos").position, Quaternion.Euler(0, 90, 270));
+        var spawnedItem = Instantiate(itemData.PickupPrefab, ForgeObject.transform.Find("WeaponPos").position, Quaternion.Euler(0, 90, 270));
         _controller.Play(string.Empty);
 
         while (_controller.GetCurrentAnimatorStateInfo(0).IsName(string.Empty))
@@ -65,11 +68,12 @@ public class ForgeController : MonoBehaviour
                 break;
         }
         _uiElement.gameObject.SetActive(true);
+        _isUpgrading = false;
     }
 
     private static bool CanForge()
     {
-        if (_uiElement.IsActive)
+        if (_uiElement.IsActive && !_isUpgrading)
             return true;
 
         return false;
@@ -79,14 +83,29 @@ public class ForgeController : MonoBehaviour
     {
         if (InputSystem.InputMapping.@default.Use.triggered && CanForge())
         {
-            if (ScoreSystem.Score.Value >= NeededScore)
+            var itemId = LocalPlayer.Inventory.RightHandItem?._itemID;
+            if (_forgeableItems.Contains((ItemsId)itemId))
             {
-                ScoreSystem.DecScore(NeededScore);
-                UpgradeWeapon(LocalPlayer.Inventory.RightHandItem._itemID).RunCoro();
+                if (WeaponsUpgrade.IsWeaponUpgraded((ItemsId)itemId))
+                {
+                    LocalPlayer.Sfx.PlayRemove();
+                    SonsTools.ShowMessage($"Weapon is already upgraded");
+                }
+                else if (ScoreSystem.Score.Value >= NeededScore)
+                {
+                    ScoreSystem.DecScore(NeededScore);
+                    UpgradeWeapon(LocalPlayer.Inventory.RightHandItem._itemID).RunCoro();
+                }
+                else
+                {
+                    LocalPlayer.Sfx.PlayRemove();
+                    SonsTools.ShowMessage($"Need <color=yellow>{NeededScore}</color> score to upgrade the weapon");
+                }
             }
             else
             {
-                SonsTools.ShowMessage($"Need <color=yellow>{NeededScore}</color> score to upgrade the weapon");
+                LocalPlayer.Sfx.PlayRemove();
+                SonsTools.ShowMessage($"Equipped item can't be upgraded");
             }
         }
     }

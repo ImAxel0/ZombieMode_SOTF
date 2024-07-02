@@ -38,8 +38,7 @@ public class ZMainMenu : MonoBehaviour
             - AxMenuButton("Play ZombieMode", () => { ToggleMenu().RunCoro(); }, new Color(0.72f, 0.25f, 0.25f), EBackground.RoundedStandard)
             - AxMenuButton("Installer", InstallerUi.ShowInstaller, new Color(0.48f, 0.16f, 0.16f), EBackground.RoundedStandard);
 
-        Font font = new Font(@"C:\Users\Alex\Downloads\HeadlinerNo.45.ttf");
-        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(font);
+        TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(UiManager.Headliner45);
 
         ZombiePanel = AxCreateFillPanel("ZombiePanel", Color.black.WithAlpha(0)).OverrideSorting(100).Active(false);
 

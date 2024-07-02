@@ -178,6 +178,7 @@ public class MysteryBoxController : MonoBehaviour
             }
             else
             {
+                LocalPlayer.Sfx.PlayRemove();
                 SonsTools.ShowMessage($"Need <color=yellow>{NeededScore}</color> score to open the box");
             }
         }

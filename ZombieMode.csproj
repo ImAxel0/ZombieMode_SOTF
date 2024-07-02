@@ -25,9 +25,11 @@
       <None Remove="Resources\Images\InteractIcons\MysteryBoxInteract.png" />
       <None Remove="Resources\Images\Overlays\DamageOverlay.png" />
       <None Remove="Resources\Images\Overlays\FlamesOverlay.png" />
-      <None Remove="Resources\Images\Perks\heart.png" />
-      <None Remove="Resources\Images\Perks\running.png" />
+      <None Remove="Resources\Images\PerkIcons\HealthColaIcon.png" />
+      <None Remove="Resources\Images\PerkIcons\JumpColaIcon.png" />
+      <None Remove="Resources\Images\PerkIcons\RushColaIcon.png" />
       <None Remove="Resources\Images\TransitionImage.jpg" />
+      <None Remove="Resources\Images\WeaponUpgradeIcon.png" />
       <None Remove="Resources\Images\ZombieModeLoading.jpg" />
     </ItemGroup>
 
@@ -59,9 +61,11 @@
       <EmbeddedResource Include="Resources\Images\InteractIcons\MysteryBoxInteract.png" />
       <EmbeddedResource Include="Resources\Images\Overlays\DamageOverlay.png" />
       <EmbeddedResource Include="Resources\Images\Overlays\FlamesOverlay.png" />
-      <EmbeddedResource Include="Resources\Images\Perks\heart.png" />
-      <EmbeddedResource Include="Resources\Images\Perks\running.png" />
+      <EmbeddedResource Include="Resources\Images\PerkIcons\HealthColaIcon.png" />
+      <EmbeddedResource Include="Resources\Images\PerkIcons\JumpColaIcon.png" />
+      <EmbeddedResource Include="Resources\Images\PerkIcons\RushColaIcon.png" />
       <EmbeddedResource Include="Resources\Images\TransitionImage.jpg" />
+      <EmbeddedResource Include="Resources\Images\WeaponUpgradeIcon.png" />
       <EmbeddedResource Include="Resources\Images\ZombieModeLoading.jpg" />
     </ItemGroup>
 
