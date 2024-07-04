@@ -11,6 +11,9 @@ using Sons.Weapon;
 using ZombieMode.Libs;
 using ZombieMode.UI;
 using ZombieMode.Core;
+using TheForest.Items.Inventory;
+using static SUI.SUI;
+using System.Collections;
 
 namespace ZombieMode.Gameplay;
 
@@ -30,6 +33,7 @@ public class Game : MonoBehaviour
     public static Observable<int> Enemies = new(0);
 
     static SonsFMODEventEmitter _fmodEmitter = new();
+    static bool _returningToMenu;
 
     public static void InitGame()
     {
@@ -38,7 +42,10 @@ public class Game : MonoBehaviour
         LocalPlayer._instance.gameObject.AddComponent<Player>();
         LocalPlayer._instance.gameObject.AddComponent<CustomInventory>();
         LocalPlayer._instance.gameObject.AddComponent<Game>();
+        LocalPlayer._instance.gameObject.AddComponent<SpawnSystem>();
         LocalPlayer._instance.gameObject.AddComponent<ScoreSystem>();
+        LocalPlayer._instance.gameObject.AddComponent<PerksManager>();
+        LocalPlayer._instance.gameObject.AddComponent<WeaponsUpgrade>();
         LocalPlayer._instance.gameObject.AddComponent<MysteryBoxController>();
         LocalPlayer._instance.gameObject.AddComponent<ForgeController>();
         LocalPlayer._instance.gameObject.AddComponent<DoorsManager>();
@@ -49,6 +56,10 @@ public class Game : MonoBehaviour
         LocalPlayer._instance.gameObject.AddComponent<HUD>();
         LocalPlayer._instance.gameObject.AddComponent<Overlays>();
         ZombieConsole.SilentInput().RunCoro();
+
+        ZombieMode.HarmonyInst.PatchAll(typeof(WeaponsUpgrade));
+        ZombieMode.HarmonyInst.PatchAll(typeof(ActorsManager));
+        ZombieMode.HarmonyInst.PatchAll(typeof(Player));
 
         ZombieMode.HarmonyInst.Patch(AccessTools.Method(typeof(VailActor), nameof(VailActor.UpdateDamageTakenStats)),
             new HarmonyMethod(typeof(ScoreSystem), nameof(ScoreSystem.DamageToScore)));
@@ -62,9 +73,6 @@ public class Game : MonoBehaviour
         ZombieMode.HarmonyInst.Patch(AccessTools.Method(typeof(ShotgunWeaponController), nameof(ShotgunWeaponController.TriggerShotFiredAudio)),
             new HarmonyMethod(typeof(WeaponsUpgrade.ShotgunUpgrade), nameof(WeaponsUpgrade.ShotgunUpgrade.OnTriggerShotFiredAudio)));
 
-        //ZombieMode.HarmonyInst.Patch(AccessTools.Method(typeof(RangedWeaponController), nameof(RangedWeaponController.Update)),
-        //new HarmonyMethod(typeof(WeaponsUpgrade), nameof(WeaponsUpgrade.RangedWeaponControllerUpdate)));
-
         ZombieMode.HarmonyInst.Patch(AccessTools.Method(typeof(RangedWeapon), nameof(RangedWeapon.LateUpdate)),
             new HarmonyMethod(typeof(Player), nameof(Player.UpdateAmmoCounter)));
     }
@@ -74,6 +82,7 @@ public class Game : MonoBehaviour
         InitGame();
         DebugConsole.Instance._lockTimeOfDay("00");
         //DebugConsole.Instance._godmode("on");
+        ItemHotkeyController.GetInstance().gameObject.SetActive(false);
         GameObject.Find("SpaMusicGroup").SetActive(false);
         GameObject.Find("GymMusicGroup").SetActive(false);
         GameObject.Find("BunkerAll/Gyms/BE_GymA_Baked/SETDRESSING/ParlorPalmALOD0").SetActive(false);
@@ -92,6 +101,7 @@ public class Game : MonoBehaviour
         LocalPlayer.Inventory.AddItem((int)ItemsIdManager.ItemsId.Backpack);
         LocalPlayer.Inventory.AddItem((int)ItemsIdManager.ItemsId.CompactPistol);
         LocalPlayer.Inventory.AddItem((int)ItemsIdManager.ItemsId.PistolAmmo, 120, true);
+        LocalPlayer.Inventory.AddItem((int)ItemsIdManager.ItemsId.Grenade, 2, true);
 
         PlayerAnims.PlayWakeup();
         SpawnSystem.CreateActorSpawners();
@@ -101,6 +111,7 @@ public class Game : MonoBehaviour
         HUD.DisableGameHud();
         Loading.ToggleLoading();
         HUD.HudPanel.Active(true);
+        SceneMaterialsSwap.SwapStairsRoom(); // we need to call it again for unknown reasons
     }
 
     private static void IncRound()
@@ -117,6 +128,12 @@ public class Game : MonoBehaviour
         AudioController.PlayBSound(_fmodEmitter, "event:/Game/start", AudioController.SoundType.Sfx);
     }
 
+    private static IEnumerator ReturnToMenu()
+    {
+        yield return new WaitForSeconds(6f);
+        Loading.ExitToMenu();
+    }
+
     public void Update()
     {
         Enemies.Value = ActorsManager.GetEnemiesAlive();
@@ -125,5 +142,19 @@ public class Game : MonoBehaviour
         {
             AdvanceRound();
         }
+
+        if (GameState == GameStates.DeadInGame && !_returningToMenu)
+        {
+            HUD.HudPanel.Active(false);
+            ReturnToMenu().RunCoro();
+            _returningToMenu = true;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _returningToMenu = false;
+        Round.Set(1);
+        Enemies.Set(0);
     }
 }

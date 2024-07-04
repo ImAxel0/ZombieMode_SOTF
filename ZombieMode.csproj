@@ -30,7 +30,7 @@
       <None Remove="Resources\Images\PerkIcons\RushColaIcon.png" />
       <None Remove="Resources\Images\TransitionImage.jpg" />
       <None Remove="Resources\Images\WeaponUpgradeIcon.png" />
-      <None Remove="Resources\Images\ZombieModeLoading.jpg" />
+      <None Remove="Resources\Images\ZombieModeLoading.png" />
     </ItemGroup>
 
     <ItemGroup>
@@ -66,7 +66,7 @@
       <EmbeddedResource Include="Resources\Images\PerkIcons\RushColaIcon.png" />
       <EmbeddedResource Include="Resources\Images\TransitionImage.jpg" />
       <EmbeddedResource Include="Resources\Images\WeaponUpgradeIcon.png" />
-      <EmbeddedResource Include="Resources\Images\ZombieModeLoading.jpg" />
+      <EmbeddedResource Include="Resources\Images\ZombieModeLoading.png" />
     </ItemGroup>
 
     <ItemGroup>

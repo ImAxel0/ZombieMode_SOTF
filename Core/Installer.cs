@@ -17,7 +17,8 @@ public class Installer
     public static Observable<float> DownloadProgress = new(0);
     public static Observable<string> DownloadSpeed = new("");
 
-    const string url = "https://github.com/ImAxel0/Download-Testing/releases/download/test-1.0.0/Testing.zip";
+    //const string url = "https://github.com/ImAxel0/Download-Testing/releases/download/test-1.0.0/Testing.zip";
+    const string url = "https://download1654.mediafire.com/2igv7ebvo7ggcron1bSrsApYzFi5xycL7Fw3mT5j9ScaMnZzO16lAUTdDdKzjEzYyM9PRPqRCuBYDLfGpupCktkzUJjIMoQ_FdtGLlwQNOUXfGhiTqPqKxRHmHjyI7dvi2HdYBqBoXuaKNLBX5b5A5xSe9QmQZWJcRlV-mbvMurh/3v24ituz3ppogo1/ZombieModeContent.zip";
     const string info = "This installer will download and install all of the necessary files to play ZombieMode\n" +
         "Click on the Start Download button to download the necessary files.";
     const string downloading = "The installer is now downloading the required files.\n" +
@@ -44,17 +45,17 @@ public class Installer
     {
         IsDownloading.Set(true);
         TextContent.Set(downloading);
-        DownloadFile(url, Path.Combine(LoaderEnvironment.ModsDirectory, "Testing.zip")).RunCoro();
+        DownloadFile(url, Path.Combine(LoaderEnvironment.ModsDirectory, $"{Guid.NewGuid()}.zip")).RunCoro();
     }
 
     public static void OnUninstall_Click()
     {
-        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")))
+        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")))
         {
-            var files = Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode"));
+            var files = Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent"));
             foreach (var file in files)
             {
-                if (file != Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode\\manifest.json"))
+                if (file != Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent\\manifest.json"))
                 {
                     File.Delete(file);
                 }
@@ -82,9 +83,9 @@ public class Installer
 
     public static bool CheckInstallation()
     {
-        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")))
+        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")))
         {
-            if (Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")).Length > 1)
+            if (Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")).Length > 10)
             {
                 return true;
             }

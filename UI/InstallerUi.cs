@@ -47,9 +47,9 @@ public class InstallerUi : MonoBehaviour
             .BindVisibility(ShowExit));
         bottomContainer.Add(AxMenuButton("Cancel download", Installer.OnCancelDownload_Click, Color.red.WithAlpha(0.4f), EBackground.RoundedStandard)
             .BindVisibility(Installer.IsDownloading));
-        bottomContainer.Add(AxMenuButton("Uninstall", Installer.OnExitInstaller_Click, new Color(0.51f, 0.03f, 0.03f), EBackground.RoundedStandard)
+        bottomContainer.Add(AxMenuButton("Uninstall", Installer.OnUninstall_Click, new Color(0.51f, 0.03f, 0.03f), EBackground.RoundedStandard)
             .BindVisibility(ShowUninstall));
-        bottomContainer.Add(AxMenuButton("Repair installation", Installer.OnExitInstaller_Click, new Color(0.83f, 0.22f, 0.06f), EBackground.RoundedStandard)
+        bottomContainer.Add(AxMenuButton("Repair installation", Installer.OnRepair_Click, new Color(0.83f, 0.22f, 0.06f), EBackground.RoundedStandard)
             .BindVisibility(ShowRepair));
         bottomContainer.Add(AxMenuButton($"Start Download\n({Installer.DownloadSize})", Installer.OnDownload_ClickAsync, Color.green.WithAlpha(0.4f), EBackground.RoundedStandard)
             .BindVisibility(ShowInstall));
@@ -92,7 +92,7 @@ public class InstallerUi : MonoBehaviour
 
         if (Installer.CheckInstallation())
         {
-            ShowInstall.Set(true);
+            ShowInstall.Set(false);
             ShowUninstall.Set(true);
             ShowRepair.Set(true);
             ShowExit.Set(true);

@@ -1,4 +1,5 @@
-﻿using RedLoader;
+﻿using Construction.Utils;
+using RedLoader;
 using Sons.Ai.Vail;
 using Sons.Gui;
 using Sons.Save;
@@ -6,8 +7,10 @@ using SonsSdk;
 using SUI;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using ZombieMode.Gameplay;
 using ZombieMode.Libs;
+using ZombieMode.UI;
 using static SUI.SUI;
 using static ZombieMode.Libs.AXSUI;
 
@@ -37,7 +40,7 @@ public class Loading
             - SImage.Dock(EDockType.Fill).Texture(ResourcesLoader.ResourceToTex("ZombieModeLoading"));
 
         _currentTip.Value = _loadingTips[UnityEngine.Random.Range(0, _loadingTips.Length)];
-        var tipsContainer = SContainer.Dock(EDockType.Bottom).Background(Color.black.WithAlpha(1), EBackground.Sons).Height(50).Position(null, 200)
+        var tipsContainer = SContainer.Dock(EDockType.Bottom).Background(Color.black.WithAlpha(0.7f), EBackground.Sons).Height(50).Position(null, 200)
                             - AxTextDynamic(_currentTip, 40);
 
         LoadingPanel.Add(tipsContainer);
@@ -62,6 +65,13 @@ public class Loading
     public static void ToggleLoading()
     {
         LoadingPanel.Active(!LoadingPanel.Root.activeSelf);
+    }
+
+    public static void ExitToMenu()
+    {
+        Overlays.KillAll();
+        AudioController.StopBSound(SoundManager.musicEmitter);
+        SceneManager.LoadScene("SonsTitleScene", LoadSceneMode.Single);
     }
 
     public static IEnumerator LoadIntoGame()

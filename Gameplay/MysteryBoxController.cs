@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using RedLoader;
-
 using static ZombieMode.Helpers.ItemsIdManager;
 using Sons.Gui.Input;
 using Sons.Input;
@@ -14,6 +13,7 @@ using ZombieMode.Libs;
 using ZombieMode.Core;
 using TheForest.Utils;
 using System.Diagnostics;
+using static SUI.SUI;
 
 namespace ZombieMode.Gameplay;
 
@@ -36,16 +36,15 @@ public class MysteryBoxController : MonoBehaviour
 
     static List<int> _misteryBoxItems = new List<int>()
     {
+        (int)ItemsId.CompactPistol,
         (int)ItemsId.ShotgunPumpAction,
         (int)ItemsId.Revolver,
         (int)ItemsId.Rifle,
         (int)ItemsId.Crossbow,
-        (int)ItemsId.Grenade,
         (int)ItemsId.Katana,
         (int)ItemsId.FireAxe,
         (int)ItemsId.ModernAxe,
         (int)ItemsId.TaserStick,
-        (int)ItemsId.TimeBomb,
         (int)ItemsId.StunGun,
         //(int)CustomItemIDs.TeddyBear,
     };
@@ -102,7 +101,7 @@ public class MysteryBoxController : MonoBehaviour
         IsCyclingItems = false;
 
         Transform gunPos = MysteryBox.transform.Find("GunContainer/Gun");
-        ItemData spawnedItemData = ItemDatabaseManager.ItemById(_misteryBoxItems[Random.RandomRange(0, _misteryBoxItems.Count - 1)]);
+        ItemData spawnedItemData = ItemDatabaseManager.ItemById(_misteryBoxItems[Random.Range(0, _misteryBoxItems.Count - 1)]);
         GameObject spawnedItem = ItemUtils.SpawnItemPickup(spawnedItemData, gunPos.position, gunPos.rotation, Vector3.zero, false, false, false, false, null, null, 1, new(Vector3.zero), new(Vector3.zero));
         spawnedItem.SetParent(gunPos, true);
 
@@ -130,12 +129,41 @@ public class MysteryBoxController : MonoBehaviour
                 }
                 yield return null;
             }
+            sw.Stop();
 
             // if item was picked up
             if (LocalPlayer.Inventory.Owns(spawnedItemData.Id))
             {
+                switch ((ItemsId)spawnedItemData.Id)
+                {
+                    case ItemsId.CompactPistol:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
+                        break;
+                    case ItemsId.Revolver:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
+                        break;
+                    case ItemsId.ShotgunPumpAction:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.BuckshotAmmo, 60);
+                        break;
+                    case ItemsId.Rifle:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.RifleAmmo, 40);
+                        break;
+                    case ItemsId.Crossbow:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.CrossbowAmmoBolt, 30);
+                        break;
+                    case ItemsId.TaserStick:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.Batteries, 1);
+                        break;
+                    case ItemsId.StunGun:
+                        LocalPlayer.Inventory.AddItem((int)ItemsId.StunGunAmmo, 60);
+                        break;
+                    default:
+                        break;
+                }
                 CustomInventory.Instance.SetMainItem(lastEquipped, (ItemsId)spawnedItemData.Id);
             }
+            var delay = _timeToClose.m_Seconds - sw.Elapsed.TotalSeconds;
+            yield return new WaitForSeconds((float)delay);
         }
         else yield return _timeToClose;
 
@@ -158,7 +186,7 @@ public class MysteryBoxController : MonoBehaviour
         GameObject cycleItem;
         while (IsCyclingItems)
         {
-            cycleItem = ItemUtils.SpawnItemPickup(ItemDatabaseManager.ItemById(_misteryBoxItems[Random.Range(0, _misteryBoxItems.Count)]),
+            cycleItem = ItemUtils.SpawnItemPickup(ItemDatabaseManager.ItemById(_misteryBoxItems[Random.Range(0, _misteryBoxItems.Count - 1)]),
                 gunPos.position, gunPos.rotation, Vector3.zero, false, false, false, false, null, null, 1, new(new Vector3(0, 0, 0)), new(new Vector3(0, 0, 0)));
             cycleItem.SetParent(gunPos, true);
             yield return _cycleSpeed;
@@ -169,6 +197,8 @@ public class MysteryBoxController : MonoBehaviour
 
     public void Update()
     {
+        TogglePanel("MysteryBoxPrompt", _uiElement.IsActive);
+
         if (InputSystem.InputMapping.@default.Use.triggered && CanOpenBox())
         {
             if (ScoreSystem.Score.Value >= NeededScore)
@@ -183,5 +213,11 @@ public class MysteryBoxController : MonoBehaviour
             }
         }
         _fmodEmitter.instance.set3DAttributes(MysteryBox.transform.position.To3DAttributes());
+    }
+
+    private void OnDestroy()
+    {
+        IsBoxOpen = false;
+        IsCyclingItems = false;
     }
 }

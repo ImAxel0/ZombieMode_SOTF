@@ -1,10 +1,13 @@
 ﻿using SUI;
 using System.Collections;
 using TheForest.Utils;
+using UnityEngine;
+using RedLoader;
 
 namespace ZombieMode.Gameplay;
 
-public class PerksManager
+[RegisterTypeInIl2Cpp]
+public class PerksManager : MonoBehaviour
 {
     public static Observable<bool> HasRushCola = new(false);
     public static Observable<bool> HasJumpCola = new(false);
@@ -26,7 +29,7 @@ public class PerksManager
     public static IEnumerator GiveJumpCola()
     {
         HasJumpCola.Value = true;
-        LocalPlayer.FpCharacter.JumpMultiplier = 1.5f;
+        LocalPlayer.FpCharacter.JumpMultiplier = 2f;
         while (HasJumpCola.Value)
         {
             yield return null;
@@ -44,5 +47,12 @@ public class PerksManager
             yield return null;
         }
         LocalPlayer.Vitals.Health.SetMax(LocalPlayer.Vitals.Health._defaultValue);
+    }
+
+    private void OnDestroy()
+    {
+        HasRushCola.Set(false);
+        HasJumpCola.Set(false);
+        HasHealthCola.Set(false);
     }
 }

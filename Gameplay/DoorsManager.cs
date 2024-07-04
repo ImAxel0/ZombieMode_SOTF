@@ -13,7 +13,8 @@ namespace ZombieMode.Gameplay;
 [RegisterTypeInIl2Cpp]
 public class DoorsManager : MonoBehaviour
 {
-    public static List<GameObject> Doors = new();
+    // identifier, gameobject
+    public static Dictionary<string, GameObject> Doors = new();
     public static Dictionary<LinkUiElement, int> UiCost = new();
 
     public static float _interactionDistance = 2f;
@@ -27,24 +28,24 @@ public class DoorsManager : MonoBehaviour
 
         var one = Instantiate(DoorGo.Door, DoorsData.Spa.DoorLeft.Item1, Quaternion.Euler(DoorsData.Spa.DoorLeft.Item2));
         one.transform.localScale = DoorsData.Spa.DoorLeft.Item3;
-        one.GetComponentInChildren<Text>().text = DoorsData.Spa.DoorLeft.Item4.ToString();
-        var ui1 = Interactable.Create(one, _interactionDistance, Interactable.InteractableType.Open, icon);
-        UiCost.Add(ui1, DoorsData.Spa.DoorLeft.Item4);
-        Doors.Add(one);
+        //one.GetComponentInChildren<Text>().text = DoorsData.Spa.DoorLeft.Item4.ToString();
+        //var ui1 = Interactable.Create(one, _interactionDistance, Interactable.InteractableType.Open, icon);
+        //UiCost.Add(ui1, DoorsData.Spa.DoorLeft.Item4);
+        //Doors.Add("SpaLeft", one);
 
         var two = Instantiate(DoorGo.Door, DoorsData.Spa.DoorRight.Item1, Quaternion.Euler(DoorsData.Spa.DoorRight.Item2));
         two.transform.localScale = DoorsData.Spa.DoorRight.Item3;
         two.GetComponentInChildren<Text>().text = DoorsData.Spa.DoorRight.Item4.ToString();
         var ui2 = Interactable.Create(two, _interactionDistance, Interactable.InteractableType.Open, icon);
         UiCost.Add(ui2, DoorsData.Spa.DoorRight.Item4);
-        Doors.Add(two);
+        Doors.Add("SpaRight", two);
 
         var three = Instantiate(DoorGo.Door, DoorsData.Gym.DoubleDoor.Item1, Quaternion.Euler(DoorsData.Gym.DoubleDoor.Item2));
         three.transform.localScale = DoorsData.Gym.DoubleDoor.Item3;
         three.GetComponentInChildren<Text>().text = DoorsData.Gym.DoubleDoor.Item4.ToString();
         var ui3 = Interactable.Create(three, _interactionDistance, Interactable.InteractableType.Open, icon);
         UiCost.Add(ui3, DoorsData.Gym.DoubleDoor.Item4);
-        Doors.Add(three);
+        Doors.Add("GymDouble", three);
 
         GameObject.Find(DoorsData.Spa.GlassDoors)?.SetActive(false);
         var four = Instantiate(DoorGo.Door, DoorsData.Gym.GlassDoor.Item1, Quaternion.Euler(DoorsData.Gym.GlassDoor.Item2));
@@ -52,7 +53,37 @@ public class DoorsManager : MonoBehaviour
         four.GetComponentInChildren<Text>().text = DoorsData.Gym.GlassDoor.Item4.ToString();
         var ui4 = Interactable.Create(four, _interactionDistance, Interactable.InteractableType.Open, icon);
         UiCost.Add(ui4, DoorsData.Gym.GlassDoor.Item4);
-        Doors.Add(four);
+        Doors.Add("GymGlass", four);
+
+        var five = Instantiate(DoorGo.Door, DoorsData.Spa.BigDoor.Item1, Quaternion.Euler(DoorsData.Spa.BigDoor.Item2));
+        five.transform.localScale = DoorsData.Spa.BigDoor.Item3;
+        five.GetComponentInChildren<Text>().text = DoorsData.Spa.BigDoor.Item4.ToString();
+        var ui5 = Interactable.Create(five, _interactionDistance, Interactable.InteractableType.Open, icon);
+        UiCost.Add(ui5, DoorsData.Spa.BigDoor.Item4);
+        Doors.Add("SpaBig", five);
+    }
+
+    public static void OpenDoor(GameObject door)
+    {
+        string doorId = Doors.FirstOrDefault(x => x.Value == door).Key;
+
+        switch (doorId)
+        {
+            case "SpaBig":
+                SpawnSystem.EnableSpawnPoint(SpawnSystem.GymSpawns);
+                break;
+            case "GymDouble":
+                SpawnSystem.EnableSpawnPoint(SpawnSystem.GymPoolSpawns);
+                break;
+            case "SpaLeft":
+                SpawnSystem.EnableSpawnPoint(SpawnSystem.StairsHallSpawns);
+                break;
+            case "SpaRight":
+                SpawnSystem.EnableSpawnPoint(SpawnSystem.StairsHallSpawns);
+                break;
+        }
+
+        door.SetActive(false);
     }
 
     public void Update()
@@ -66,7 +97,7 @@ public class DoorsManager : MonoBehaviour
                     if (ScoreSystem.Score.Value >= pair.Value)
                     {
                         UiCost.Remove(pair.Key);
-                        pair.Key.transform.root.gameObject.SetActive(false);
+                        OpenDoor(pair.Key.transform.root.gameObject);
                         ScoreSystem.DecScore(pair.Value);
                         AudioController.PlayBSound(_fmodEmitter, "event:/Buying/door-open", AudioController.SoundType.Sfx);
                     }
@@ -78,5 +109,11 @@ public class DoorsManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        Doors.Clear();
+        UiCost.Clear();
     }
 }

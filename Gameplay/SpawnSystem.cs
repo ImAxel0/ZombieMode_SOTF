@@ -6,10 +6,12 @@ using UnityEngine;
 using ZombieMode.Helpers;
 using RedLoader;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ZombieMode.Gameplay;
 
-public class SpawnSystem
+[RegisterTypeInIl2Cpp]
+public class SpawnSystem : MonoBehaviour
 {
     struct HordeData
     {
@@ -30,13 +32,22 @@ public class SpawnSystem
     // identifier, <pos., sphere>
     public static Dictionary<SpawnPoints, Tuple<Vector3, float>> SpawnPointsDict = new()
     {
+        //{ SpawnPoints.GymSpawn1, Tuple.Create(new Vector3(-1131, 59, 15), 4f) },
+        //{ SpawnPoints.GymSpawn2, Tuple.Create(new Vector3(-1149, 59, 1), 4f) },
+        //{ SpawnPoints.GymSpawn3, Tuple.Create(new Vector3(-1154, 59, 21), 4f) },
+        //{ SpawnPoints.GymSpawn4, Tuple.Create(new Vector3(-1172, 59, 35), 4f) },
+        //{ SpawnPoints.GymSpawn5, Tuple.Create(new Vector3(-1155, 59, 46), 4f) },
+        { SpawnPoints.SpaSpawn1, Tuple.Create(new Vector3(-1110, 59, 28), 4f) },
+        { SpawnPoints.SpaSpawn2, Tuple.Create(new Vector3(-1118, 59, -20), 4f) }
+    };
+
+    public static Dictionary<SpawnPoints, Tuple<Vector3, float>> GymSpawns = new()
+    {
         { SpawnPoints.GymSpawn1, Tuple.Create(new Vector3(-1131, 59, 15), 4f) },
         { SpawnPoints.GymSpawn2, Tuple.Create(new Vector3(-1149, 59, 1), 4f) },
         { SpawnPoints.GymSpawn3, Tuple.Create(new Vector3(-1154, 59, 21), 4f) },
         { SpawnPoints.GymSpawn4, Tuple.Create(new Vector3(-1172, 59, 35), 4f) },
         { SpawnPoints.GymSpawn5, Tuple.Create(new Vector3(-1155, 59, 46), 4f) },
-        { SpawnPoints.SpaSpawn1, Tuple.Create(new Vector3(-1110, 59, 28), 4f) },
-        { SpawnPoints.SpaSpawn2, Tuple.Create(new Vector3(-1118, 59, -20), 4f) }
     };
 
     public static Dictionary<SpawnPoints, Tuple<Vector3, float>> GymPoolSpawns = new()
@@ -164,11 +175,41 @@ public class SpawnSystem
             SpawnPointsDict.TryGetValue(SpawnPointsDict.ElementAt(idx).Key, out var spawnPoint);
             var point = new SpawnPoint() { Position = spawnPoint.Item1 + UnityEngine.Random.insideUnitSphere * spawnPoint.Item2 };
             var spawnedActor = CannibalSpawner.SpawnWorldSimActor(point.Position, 0, 1);
-            VailWorldSimulation.Instance().ConvertToRealActor(spawnedActor);
+            var spawnedVail = VailWorldSimulation.Instance().ConvertToRealActor(spawnedActor);
+
+            if (Game.Round.Value >= 5)
+            {
+                ActorsManager.Ignite.SpawnIgnite(spawnedVail);
+            }          
 
             yield return new WaitForSeconds(HordeData.SpawnDelayBetweenEnemies);
         }
         yield return new WaitForSeconds(2f);
         canSpawnEnemies = true;
+    }
+
+    private void OnDestroy()
+    {
+        // resetting spawn points on death
+        foreach (var _spawnPoint in GymSpawns.Keys)
+        {
+            SpawnPointsDict.Remove(_spawnPoint);
+        }
+        foreach (var _spawnPoint in GymPoolSpawns.Keys)
+        {
+            SpawnPointsDict.Remove(_spawnPoint);
+        }
+        foreach (var _spawnPoint in StairsHallSpawns.Keys)
+        {
+            SpawnPointsDict.Remove(_spawnPoint);
+        }
+        foreach (var _spawnPoint in PoolSpawns.Keys)
+        {
+            SpawnPointsDict.Remove(_spawnPoint);
+        }
+        foreach (var _spawnPoint in BarSpawns.Keys)
+        {
+            SpawnPointsDict.Remove(_spawnPoint);
+        }
     }
 }

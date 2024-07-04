@@ -11,6 +11,7 @@ using TheForest.Items.Utils;
 using Sons.Items.Core;
 using System.Collections;
 using static ZombieMode.Helpers.ItemsIdManager;
+using static SUI.SUI;
 
 namespace ZombieMode.Gameplay;
 
@@ -22,6 +23,7 @@ public class ForgeController : MonoBehaviour
     public static int NeededScore = 4000;
     static Animator _controller;
     static bool _isUpgrading;
+    static SonsFMODEventEmitter _fmodEmitter = new();
 
     static List<ItemsId> _forgeableItems = new()
     {
@@ -43,6 +45,8 @@ public class ForgeController : MonoBehaviour
     private IEnumerator UpgradeWeapon(int itemId)
     {
         _isUpgrading = true;
+        AudioController.PlayBSound(_fmodEmitter, "event:/Game/forge", AudioController.SoundType.Sfx);
+
         _uiElement.gameObject.SetActive(false);
         var itemData = ItemDatabaseManager.ItemById(itemId);
         LocalPlayer.Inventory.RemoveItem(itemId);
@@ -81,6 +85,8 @@ public class ForgeController : MonoBehaviour
 
     private void Update()
     {
+        TogglePanel("ForgePrompt", _uiElement.IsActive);
+
         if (InputSystem.InputMapping.@default.Use.triggered && CanForge())
         {
             var itemId = LocalPlayer.Inventory.RightHandItem?._itemID;
@@ -108,5 +114,10 @@ public class ForgeController : MonoBehaviour
                 SonsTools.ShowMessage($"Equipped item can't be upgraded");
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        _isUpgrading = false;
     }
 }

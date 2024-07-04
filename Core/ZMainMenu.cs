@@ -26,11 +26,6 @@ public class ZMainMenu : MonoBehaviour
     static Vector3 _cameraPos;
     static SSliderOptions _transitionSlider;
 
-    static void Dumy()
-    {
-
-    }
-
     public static void UiCreate()
     {
         SonsPanel = AxCreatePanel("SonsPanel", false, new Vector2(300, 100), AnchorType.TopRight, Color.black.WithAlpha(0), EBackground.RoundedStandard)
@@ -49,7 +44,7 @@ public class ZMainMenu : MonoBehaviour
         ZombiePanel.Add(buttonsCt);
 
         var creditsCt = AxContainer(AnchorType.BottomRight, new Vector2(300, 100), Color.black.WithAlpha(0))
-            - AxMenuButtonText("Credits", Dumy, 60)["Credits_get"].As<SButtonOptions>().Font(font_asset);
+            - AxMenuButtonText("Credits", Credits.ToggleCreditsPanel, 60)["Credits_get"].As<SButtonOptions>().Font(font_asset);
         ZombiePanel.Add(creditsCt);
 
         BlackTransitionPanel = AxCreateFillPanel("BlackScreen", Color.black).OverrideSorting(999).Active(false)
@@ -95,7 +90,7 @@ public class ZMainMenu : MonoBehaviour
         {
             //GameObject.Find("HelicopterAudioEmitter").GetComponent<FMOD_StudioEventEmitter>().Stop();
             SceneManager.GetSceneByName(SonsSceneManager.TitleSceneName).GetRootGameObjects().FirstWithName("TwinsTitleScene").SetActive(false);
-            AudioController.PlayBSound(SoundManager.musicEmitter, "event:/Music/main-menu", AudioController.SoundType.Music);
+            AudioController.PlayBSound(SoundManager.musicEmitter, "event:/Music/ZombieModeSoundtrack", AudioController.SoundType.Music);
             SonsPanel.Active(false);
         }
         else

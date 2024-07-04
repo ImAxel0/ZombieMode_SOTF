@@ -7,10 +7,12 @@ using HarmonyLib;
 using Endnight.Utilities;
 using ZombieMode.Libs;
 using ZombieMode.Core;
+using RedLoader;
 
 namespace ZombieMode.Gameplay;
 
-public class WeaponsUpgrade
+[RegisterTypeInIl2Cpp]
+public class WeaponsUpgrade : MonoBehaviour
 {
     [HarmonyPatch(typeof(RangedWeaponController), nameof(RangedWeaponController.Update))]
     [HarmonyPrefix]
@@ -39,6 +41,12 @@ public class WeaponsUpgrade
             default:
                 return false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        PistolUpgrade.IsUpgraded = false;
+        ShotgunUpgrade.IsUpgraded = false;
     }
 
     public class PistolUpgrade

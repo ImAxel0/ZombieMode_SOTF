@@ -11,6 +11,8 @@ using UnityEngine.UI;
 using System.Collections;
 using ZombieMode.Libs;
 using ZombieMode.Gameplay;
+using static SonsSdk.ItemTools;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ZombieMode.UI;
 
@@ -24,6 +26,8 @@ public class HUD : MonoBehaviour
     public static Observable<string> ScoreInfo = new("<size=40>1000</size>");
     public static Observable<Texture> EquippedItemIcon = new(new Texture());
     public static Observable<string> RoundInfo = new("<size=180>1</size>");
+    public static List<SContainerOptions> TextInfoPrompts = new();
+
     static SLabelOptions _roundText;
 
     static Texture _closedFist;
@@ -43,7 +47,7 @@ public class HUD : MonoBehaviour
         HudPanel.Add(consumablesBox);
 
         // BottomRight
-        var bottomRight = AxCreatePanel("BottomRight", false, new Vector2(600, 300), AnchorType.BottomRight, Color.black.WithAlpha(0));
+        var bottomRight = AxCreatePanel("ZombieModeBottomRight", false, new Vector2(600, 300), AnchorType.BottomRight, Color.black.WithAlpha(0));
         var splatter = SImage.Texture(ResourcesLoader.ResourceToTex("ink-splatter")).Dock(EDockType.Fill);
         splatter.ImageObject.color = Color.white.WithAlpha(0.5f);
         bottomRight.Add(splatter);
@@ -67,7 +71,7 @@ public class HUD : MonoBehaviour
         HudPanel.Add(bottomRight);
 
         // BottomLeft
-        var bottomLeft = AxCreatePanel("BottomLeft", false, new Vector2(250, 300), AnchorType.BottomLeft, Color.black.WithAlpha(0)).Vertical(20, "EX");
+        var bottomLeft = AxCreatePanel("ZombieModeBottomLeft", false, new Vector2(250, 300), AnchorType.BottomLeft, Color.black.WithAlpha(0)).Vertical(20, "EX");
 
         var perksCt = SContainer.Dock(EDockType.Fill).Background(Color.black.WithAlpha(0), EBackground.None).Height(50).Horizontal(0, "EE").PaddingHorizontal(5)
             - SImage.Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth).Texture(ResourcesLoader.ResourceToTex("HealthColaIcon"))
@@ -86,6 +90,24 @@ public class HUD : MonoBehaviour
         bottomLeft.Add(perksCt);
         bottomLeft.Add(roundCt);
         HudPanel.Add(bottomLeft);
+
+        CreatePrompts();
+    }
+
+    private static void CreatePrompts()
+    {
+        InfoTextBox("MysteryBoxPrompt", $"Mystery Box [Cost: <color=yellow>{MysteryBoxController.NeededScore} $</color>]");
+        InfoTextBox("HealthColaPrompt", $"Health Cola [Cost: <color=yellow>{VendingMachines.HealthCola_Score} $</color>]");
+        InfoTextBox("RushColaPrompt", $"Rush Cola [Cost: <color=yellow>{VendingMachines.RushCola_Score} $</color>]");
+        InfoTextBox("JumpColaPrompt", $"Jump Cola [Cost: <color=yellow>{VendingMachines.JumpCola_Score} $</color>]");
+        InfoTextBox("ForgePrompt", $"Upgrade weapon [Cost: <color=yellow>{ForgeController.NeededScore} $</color>]");
+    }
+
+    private static void InfoTextBox(string identifier, string text)
+    {
+        var prompt = AxCreatePanel(identifier, false, new Vector2(800, 60), AnchorType.BottomCenter, Color.black.WithAlpha(0.6f), EBackground.Sons).Position(null, 30).Active(false)
+            - SLabel.RichText(text).FontAutoSize(true).Dock(EDockType.Fill).Alignment(TextAlignmentOptions.Center);
+        TextInfoPrompts.Add(prompt);
     }
 
     private static SContainerOptions OnScreenIcon(Texture icon)
@@ -137,5 +159,12 @@ public class HUD : MonoBehaviour
 
         _roundText.TextObject.CrossFadeAlpha(1, 0.5f, false);
         _roundText.TextObject.CrossFadeAlpha(0.5f, 0.5f, false);
+    }
+
+    private void OnDestroy()
+    {
+        // disable all prompts on returning to menu
+        TextInfoPrompts.ForEach(p => { p.Active(false); });
+        TextInfoPrompts.Clear();
     }
 }

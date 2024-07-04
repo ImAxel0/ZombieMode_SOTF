@@ -6,6 +6,7 @@ using RedLoader;
 using HarmonyLib;
 using UnityEngine.UI;
 using ZombieMode.Core;
+using ZombieMode.Libs;
 
 namespace ZombieMode.Gameplay;
 
@@ -91,8 +92,10 @@ public class ActorsManager
         static float _explosionRadius = 2f;
         static float _explosionDamage = 20;
 
+        static SonsFMODEventEmitter _fmodEmitter = new();
+
         public static void SpawnIgnite(VailActor spawnedActor)
-        {
+        {        
             spawnedActor.name = "Ignite";
             spawnedActor._stateFx.UpdateFireStatusFx(true);
             spawnedActor._stateFx._statusEffects.RemoveRange(1, spawnedActor._stateFx._statusEffects.Count - 1); // prevent fire from being stuck on floor and keep fire anim
@@ -106,7 +109,7 @@ public class ActorsManager
         {
             if (other.CompareTag("Player"))
             {
-                //AudioController.PlaySound("TheIgniteExplosion", AudioController.SoundType.Sfx);
+                AudioController.PlayBSound(_fmodEmitter, "event:/Game/IgniteExplosion", AudioController.SoundType.Sfx);
                 LocalPlayer.HitReactions.enableExplodeShake(2, 0);
                 VailActorManager._instance.KillActorsInRadius(other.gameObject.transform.position, _explosionRadius, VailActorClassId.Cannibal);
                 VailActorManager._instance.KillActorsInRadius(other.gameObject.transform.position, _explosionRadius, VailActorClassId.Creepy);

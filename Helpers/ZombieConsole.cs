@@ -223,6 +223,7 @@ public class ZombieConsole : MonoBehaviour
             for (int i = 0; i < value; i++)
             {
                 var actor = SpawnSystem.CannibalSpawner.SpawnWorldSimActor(hitSpawn.point + mainCam.forward * 10, 0, 1);
+                VailWorldSimulation.Instance().ConvertToRealActor(actor);
                 VailActor spawnedActor = VailActorManager.FindActiveActor(actor);
                 ActorsManager.Ignite.SpawnIgnite(spawnedActor);
             }
@@ -659,5 +660,10 @@ public class ZombieConsole : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
                 InvokeMethod();
         }
+    }
+
+    private void OnDestroy()
+    {
+        IsActive = false;
     }
 }

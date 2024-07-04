@@ -14,6 +14,7 @@ public class CustomInventory : MonoBehaviour
         { ItemsId.CompactPistol },
         { ItemsId.CombatKnife },
     };
+    public List<ItemsId> MainItems { get { return _mainItems; } }
 
     private void Start()
     {
@@ -22,12 +23,18 @@ public class CustomInventory : MonoBehaviour
 
     public void SetMainItem(int index, ItemsId itemId)
     {
+        LocalPlayer.Inventory.RemoveItem(GetEquippedIndex());
         _mainItems[index] = itemId;
     }
 
     public int GetEquippedIndex()
     {
-        return _mainItems.IndexOf((ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
+        int? index = _mainItems.IndexOf((ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
+        if (index != null)
+        {
+            return index.Value;
+        }
+        return 0; // if no item is equipped select slot 0
     }
 
     public bool EquipItem(int index)
@@ -45,6 +52,11 @@ public class CustomInventory : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             EquipItem(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            LocalPlayer.Inventory.TryEquip((int)ItemsId.Grenade, false);
         }
     }
 }

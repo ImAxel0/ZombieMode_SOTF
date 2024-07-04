@@ -143,6 +143,20 @@ public static class GreenScribbleMat
     public static GameObject GreenScribble { get; set; }
 }
 
+[AssetBundle("woodfloor")]
+public static class WoodFloorMat
+{
+    [AssetReference("WoodFloor")]
+    public static GameObject WoodFloor { get; set; }
+}
+
+[AssetBundle("obliquefloor")]
+public static class ObliqueFloorMat
+{
+    [AssetReference("ObliqueFloor")]
+    public static GameObject ObliqueFloor { get; set; }
+}
+
 [AssetBundle("damagetext")]
 public static class DamageTextGo
 {

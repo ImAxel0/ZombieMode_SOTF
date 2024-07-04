@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Data;
 using ZombieMode.Core;
 using SUI;
+using static RedLoader.RLog;
 
 namespace ZombieMode.Gameplay;
 
@@ -31,12 +32,25 @@ public class Consumables : MonoBehaviour
 
     public void Start()
     {
-        ConsumablesPair.Clear();
         ConsumablesPair.Add(NukeConsumableGo.NukeConsumable, ConsumablesController.DoNuke);
         ConsumablesPair.Add(FireSaleConsumableGo.FireSaleConsumable, () => ConsumablesController.DoFireSale().RunCoro());
         ConsumablesPair.Add(ImperceptibleConsumableGo.ImperceptibleConsumable, () => ConsumablesController.DoImperceptible().RunCoro());
         ConsumablesPair.Add(LockThemUpConsumableGo.LockThemUpConsumable, () => ConsumablesController.DoLockThemUp().RunCoro());
         ConsumablesPair.Add(DoubleScoreConsumableGo.DoubleScoreConsumable, () => ConsumablesController.DoDoubleScore().RunCoro());
+    }
+
+    private void OnDestroy()
+    {
+        ConsumablesPair.Clear();
+        _wasPickedUp = false;
+        DropEveryScore = 2000;
+        ScoreBuffer = 0;
+        DropsBuffer = 0;
+        IsDoubleScore.Set(false);
+        IsFireSale.Set(false);
+        IsImperceptible.Set(false);
+        IsLockThemUp.Set(false);
+        IsSlowThemDown.Set(false);
     }
 
     private static void UpdateStats()

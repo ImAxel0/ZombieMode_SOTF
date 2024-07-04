@@ -6,6 +6,8 @@ using UnityEngine;
 using ZombieMode.Libs;
 using ZombieMode.Core;
 using Sons.Input;
+using ZombieMode.UI;
+using static SUI.SUI;
 
 namespace ZombieMode.Gameplay;
 
@@ -111,9 +113,9 @@ public class VendingMachines : MonoBehaviour
         if (!LocalPlayer._instance || Game.GameState != Game.GameStates.InGame) 
             return;
 
-        //TogglePanel("HealthColaText", Interactable.GetUIElement(HealthCola).IsActive);
-        //TogglePanel("RushColaText", Interactable.GetUIElement(RushCola).IsActive);
-        //TogglePanel("JumpColaText", Interactable.GetUIElement(JumpCola).IsActive);
+        TogglePanel("HealthColaPrompt", Interactable.GetUiElement(HealthCola).IsActive);
+        TogglePanel("RushColaPrompt", Interactable.GetUiElement(RushCola).IsActive);
+        TogglePanel("JumpColaPrompt", Interactable.GetUiElement(JumpCola).IsActive);
 
         if (InputSystem.InputMapping.@default.Interact.triggered && Interactable.GetUiElement(HealthCola).IsActive)
         {

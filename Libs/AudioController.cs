@@ -180,4 +180,9 @@ public class AudioController
         emitter.SetVolume(volume * AudioSettings._masterVolume * _correctionFactor * SoundManager.MasterLvl * volumeAdjustmant);
         emitter.Play();
     }
+
+    public static void StopBSound(SonsFMODEventEmitter emitter)
+    {
+        emitter.Stop();
+    }
 }

@@ -12,6 +12,7 @@ namespace ZombieMode;
 public class ZombieMode : SonsMod
 {
     public static HarmonyLib.Harmony HarmonyInst;
+    private static bool _isSdkOK;
 
     public ZombieMode()
     {
@@ -27,15 +28,13 @@ public class ZombieMode : SonsMod
     protected override void OnSdkInitialized()
     {
         HarmonyInst = HarmonyInstance;
-        HarmonyInst.PatchAll(typeof(WeaponsUpgrade));
-        HarmonyInst.PatchAll(typeof(ActorsManager));
-        HarmonyInst.PatchAll(typeof(Player));
         #if DEBUG
         GlobalEvents.OnGUI.Subscribe(Debugging.DebugUI);
         #endif
         SoundTools.LoadBank(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode\\ZombieMode.bank"));
         SoundManager.Init();
         UiManager.CreateAllUi();
+        _isSdkOK = true;
     }
 
     public static void Update()
@@ -46,18 +45,16 @@ public class ZombieMode : SonsMod
 
         }  
 #endif
-
     }
 
     protected override void OnSonsSceneInitialized(ESonsScene sonsScene)
     {
         if (sonsScene == ESonsScene.Title)
         {         
-            if (Installer.CheckInstallation() == false)
+            if (_isSdkOK)
             {
-                InstallerUi.InstallerPanel.Active(true);
+                ZMainMenu.SonsPanel.Active(true);
             }
-            ZMainMenu.SonsPanel.Active(true);
             HarmonyInstance.UnpatchSelf();
             Game.GameState = Game.GameStates.Menu;
         }

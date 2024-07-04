@@ -18,6 +18,7 @@ public class UiManager
         Overlays.UiCreate();
         HUD.UiCreate();
         Scoreboard.UiCreate();
+        Credits.UiCreate();
         ZombieConsoleUi.CreateZombieConsole();
     }
 }

@@ -8,6 +8,8 @@ using HarmonyLib;
 using TheForest;
 using ZombieMode.Libs;
 using TheForest.Items.Inventory;
+using Sons.Cutscenes;
+using ZombieMode.Core;
 
 namespace ZombieMode.Gameplay;
 
@@ -67,7 +69,10 @@ public class Player : MonoBehaviour
 
     public void Update()
     {
-
+        if (LocalPlayer.Vitals.IsAlive() == false)
+        {
+            Game.GameState = Game.GameStates.DeadInGame;
+        }
     }
 
     static IEnumerator OnLavaDamage()

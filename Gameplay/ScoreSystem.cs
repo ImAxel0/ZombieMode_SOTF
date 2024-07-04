@@ -52,4 +52,14 @@ public class ScoreSystem : MonoBehaviour
             Scoreboard.Show(false);
         }
     }
+
+    private void OnDestroy()
+    {
+        Score.Set(500);
+        StringScore.Set(string.Empty);
+        ScoreMultiplier = 1;
+        SaleMultiplier = 1;
+        PlayerKills = 0;
+        StringPlayerKills.Set(string.Empty);
+    }
 }
