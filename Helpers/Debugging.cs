@@ -18,7 +18,7 @@ public class Debugging
         }
         else if (Game.GameState == Game.GameStates.Loading)
         {
-            GUI.Label(new Rect(50, 25, 100, 50), $"Loading Survival Mode... {Loading.LoadingProgress.Value:N1}");
+            GUI.Label(new Rect(50, 25, 100, 50), $"Loading Zombie Mode... {Loading.LoadingProgress.Value:N1}");
         }
         else if (Game.GameState == Game.GameStates.InGame)
         {

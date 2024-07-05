@@ -97,6 +97,9 @@ public class WallItems : MonoBehaviour
 
     private static void BuyItem(ItemsId id, int cost)
     {
+        var indexBeforeSwap = CustomInventory.Instance.GetEquippedIndex();
+        var previousItemId = CustomInventory.Instance.MainItems[indexBeforeSwap];
+
         switch (id)
         {
             case ItemsId.PistolAmmo:
@@ -106,15 +109,15 @@ public class WallItems : MonoBehaviour
                 LocalPlayer.Inventory.AddItem((int)id, Grenade.Amount, true);
                 break;
             case ItemsId.ShotgunPumpAction:
-                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), (ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
-                CustomInventory.GiveAmmoFor((int)ItemsId.ShotgunPumpAction);
-                LocalPlayer.Inventory.AddItem((int)id);
-                LocalPlayer.Inventory.TryEquip((int)id, false);               
-                break;
-            default:
-                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), (ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
                 LocalPlayer.Inventory.AddItem((int)id);
                 LocalPlayer.Inventory.TryEquip((int)id, false);
+                CustomInventory.GiveAmmoFor((int)ItemsId.ShotgunPumpAction);
+                CustomInventory.Instance.SetMainItem(indexBeforeSwap, id, (ItemsId)previousItemId);
+                break;
+            default:
+                LocalPlayer.Inventory.AddItem((int)id);
+                LocalPlayer.Inventory.TryEquip((int)id, false);
+                CustomInventory.Instance.SetMainItem(indexBeforeSwap, id, (ItemsId)previousItemId);
                 break;
         }
         ScoreSystem.DecScore(cost);

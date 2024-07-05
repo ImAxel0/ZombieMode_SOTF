@@ -28,7 +28,7 @@ public class DoorsManager : MonoBehaviour
 
         var one = Instantiate(DoorGo.Door, DoorsData.Spa.DoorLeft.Item1, Quaternion.Euler(DoorsData.Spa.DoorLeft.Item2));
         one.transform.localScale = DoorsData.Spa.DoorLeft.Item3;
-        //one.GetComponentInChildren<Text>().text = DoorsData.Spa.DoorLeft.Item4.ToString();
+        one.GetComponentInChildren<Text>().text = string.Empty;
         //var ui1 = Interactable.Create(one, _interactionDistance, Interactable.InteractableType.Open, icon);
         //UiCost.Add(ui1, DoorsData.Spa.DoorLeft.Item4);
         //Doors.Add("SpaLeft", one);
