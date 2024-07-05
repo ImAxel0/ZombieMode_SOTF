@@ -9,37 +9,71 @@ namespace ZombieMode.Gameplay;
 public class CustomInventory : MonoBehaviour
 {
     public static CustomInventory Instance { get; set; }
-    private List<ItemsId> _mainItems = new()
+    private List<int> _mainItems = new()
     {
-        { ItemsId.CompactPistol },
-        { ItemsId.CombatKnife },
+        { (int)ItemsId.CompactPistol },
+        { (int)ItemsId.CombatKnife },
     };
-    public List<ItemsId> MainItems { get { return _mainItems; } }
+    public List<int> MainItems { get { return _mainItems; } }
 
     private void Start()
     {
         Instance = this;
     }
 
+    public void SetMainItem(int index, ItemsId itemId, ItemsId toRemove)
+    {
+        LocalPlayer.Inventory.RemoveItem((int)toRemove, 1, false, false);
+        _mainItems[index] = (int)itemId;
+    }
+
     public void SetMainItem(int index, ItemsId itemId)
     {
-        LocalPlayer.Inventory.RemoveItem(GetEquippedIndex());
-        _mainItems[index] = itemId;
+        _mainItems[index] = (int)itemId;
     }
 
     public int GetEquippedIndex()
     {
-        int? index = _mainItems.IndexOf((ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
-        if (index != null)
+        if (LocalPlayer.Inventory.RightHandItem == null)
         {
-            return index.Value;
+            return -1;
         }
-        return 0; // if no item is equipped select slot 0
+        return _mainItems.IndexOf(LocalPlayer.Inventory.RightHandItem._itemID);
     }
 
     public bool EquipItem(int index)
     {
-        return LocalPlayer.Inventory.TryEquip((int)_mainItems[index], false);
+        return LocalPlayer.Inventory.TryEquip(_mainItems[index], false);
+    }
+
+    public static void GiveAmmoFor(int itemId)
+    {
+        switch ((ItemsId)itemId)
+        {
+            case ItemsId.CompactPistol:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
+                break;
+            case ItemsId.Revolver:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
+                break;
+            case ItemsId.ShotgunPumpAction:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.BuckshotAmmo, 60);
+                break;
+            case ItemsId.Rifle:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.RifleAmmo, 40);
+                break;
+            case ItemsId.Crossbow:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.CrossbowAmmoBolt, 20);
+                break;
+            case ItemsId.TaserStick:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.Batteries, 1);
+                break;
+            case ItemsId.StunGun:
+                LocalPlayer.Inventory.AddItem((int)ItemsId.StunGunAmmo, 60);
+                break;
+            default:
+                break;
+        }
     }
 
     private void Update()

@@ -13,6 +13,7 @@ using ZombieMode.Libs;
 using ZombieMode.Gameplay;
 using static SonsSdk.ItemTools;
 using static System.Net.Mime.MediaTypeNames;
+using Sons.Items.Core;
 
 namespace ZombieMode.UI;
 
@@ -25,6 +26,7 @@ public class HUD : MonoBehaviour
     static Observable<bool> _showAmmo = new(false);
     public static Observable<string> ScoreInfo = new("<size=40>1000</size>");
     public static Observable<Texture> EquippedItemIcon = new(new Texture());
+    public static Observable<Texture> SecondaryItemIcon = new(new Texture());
     public static Observable<string> RoundInfo = new("<size=180>1</size>");
     public static List<SContainerOptions> TextInfoPrompts = new();
 
@@ -64,7 +66,12 @@ public class HUD : MonoBehaviour
         itemIcon.ImageObject.color = Color.white.WithAlpha(0.5f);
         EquippedItemIcon.Set(ResourcesLoader.ResourceToTex("closed-fist"));
 
+        var secondaryItemIcon = SImage.Bind(SecondaryItemIcon).Dock(EDockType.Fill).AspectRatio(AspectRatioFitter.AspectMode.HeightControlsWidth);
+        secondaryItemIcon.ImageObject.color = Color.white.WithAlpha(0.2f);
+        secondaryItemIcon.ImageObject.rectTransform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
         ammoCt.Add(itemIcon);
+        ammoCt.Add(secondaryItemIcon);
         AmmoPanel.Add(scoreCt);
         AmmoPanel.Add(ammoCt);
         bottomRight.Add(AmmoPanel);
@@ -156,6 +163,16 @@ public class HUD : MonoBehaviour
             EquippedItemIcon.Set(LocalPlayer.Inventory.RightHandItem.Data.UiData._icon);
         }
         else EquippedItemIcon.Set(_closedFist);
+
+        int equippedIndex = CustomInventory.Instance.GetEquippedIndex();
+        if (equippedIndex == 0)
+        {
+            SecondaryItemIcon.Set(ItemDatabaseManager.ItemById(CustomInventory.Instance.MainItems[1]).UiData._icon);
+        }
+        else if (equippedIndex == 1)
+        {
+            SecondaryItemIcon.Set(ItemDatabaseManager.ItemById(CustomInventory.Instance.MainItems[0]).UiData._icon);
+        }      
 
         _roundText.TextObject.CrossFadeAlpha(1, 0.5f, false);
         _roundText.TextObject.CrossFadeAlpha(0.5f, 0.5f, false);

@@ -14,6 +14,8 @@ using ZombieMode.Core;
 using TheForest.Utils;
 using System.Diagnostics;
 using static SUI.SUI;
+using Sons.Gameplay;
+using UnityEngine.Playables;
 
 namespace ZombieMode.Gameplay;
 
@@ -105,6 +107,9 @@ public class MysteryBoxController : MonoBehaviour
         GameObject spawnedItem = ItemUtils.SpawnItemPickup(spawnedItemData, gunPos.position, gunPos.rotation, Vector3.zero, false, false, false, false, null, null, 1, new(Vector3.zero), new(Vector3.zero));
         spawnedItem.SetParent(gunPos, true);
 
+        Destroy(spawnedItem.GetComponent<PickUp>());
+        var customInteractable = Interactable.Create(spawnedItem, 2f, Interactable.InteractableType.Take, spawnedItemData.UiData._icon, true);
+
         if (spawnedItem.name == "TeddyBear(Clone)(Clone)")
         {
             // play move box anim
@@ -115,59 +120,50 @@ public class MysteryBoxController : MonoBehaviour
             yield break;
         }
 
-        if (!LocalPlayer.Inventory.Owns(spawnedItemData.Id))
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        while (_timeToClose.m_Seconds >= sw.Elapsed.TotalSeconds)
         {
-            int lastEquipped = -1;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            while (!LocalPlayer.Inventory.Owns(spawnedItemData.Id))
+            if (customInteractable.IsActive && InputSystem.InputMapping.@default.Interact.triggered)
             {
-                lastEquipped = CustomInventory.Instance.GetEquippedIndex();
-                if (sw.Elapsed.TotalSeconds > _timeToClose.m_Seconds)
+                var lastEquipped = CustomInventory.Instance.GetEquippedIndex();
+                var lastEquippedId = LocalPlayer.Inventory.RightHandItem?._itemID;
+
+                // if not item is equipped when swapping
+                if ((lastEquipped != 0 && lastEquipped != 1) || lastEquippedId == null)
                 {
+                    SonsTools.ShowMessage("Equip a primary item to swap it with the mystery box one", 5f);
+                }
+                // if already own the item only give the ammo for it
+                else if (CustomInventory.Instance.MainItems.Contains(spawnedItemData.Id))
+                {
+                    CustomInventory.GiveAmmoFor(spawnedItemData.Id);
+                    Destroy(spawnedItem);
                     break;
                 }
-                yield return null;
-            }
-            sw.Stop();
-
-            // if item was picked up
-            if (LocalPlayer.Inventory.Owns(spawnedItemData.Id))
-            {
-                switch ((ItemsId)spawnedItemData.Id)
+                else
                 {
-                    case ItemsId.CompactPistol:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
-                        break;
-                    case ItemsId.Revolver:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.PistolAmmo, 140);
-                        break;
-                    case ItemsId.ShotgunPumpAction:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.BuckshotAmmo, 60);
-                        break;
-                    case ItemsId.Rifle:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.RifleAmmo, 40);
-                        break;
-                    case ItemsId.Crossbow:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.CrossbowAmmoBolt, 30);
-                        break;
-                    case ItemsId.TaserStick:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.Batteries, 1);
-                        break;
-                    case ItemsId.StunGun:
-                        LocalPlayer.Inventory.AddItem((int)ItemsId.StunGunAmmo, 60);
-                        break;
-                    default:
-                        break;
-                }
-                CustomInventory.Instance.SetMainItem(lastEquipped, (ItemsId)spawnedItemData.Id);
+                    // item was picked up
+                    CustomInventory.GiveAmmoFor(spawnedItemData.Id);
+                    CustomInventory.Instance.SetMainItem(lastEquipped, (ItemsId)spawnedItemData.Id, (ItemsId)lastEquippedId);
+                    LocalPlayer.Inventory.AddItem(spawnedItemData.Id);
+                    LocalPlayer.Inventory.TryEquip(spawnedItemData.Id, false, false);
+                    Destroy(spawnedItem);
+                    break; // exit the while loop if item was picked up
+                }              
             }
-            var delay = _timeToClose.m_Seconds - sw.Elapsed.TotalSeconds;
-            yield return new WaitForSeconds((float)delay);
+            yield return null;
         }
-        else yield return _timeToClose;
+        sw.Stop();
 
-        Destroy(spawnedItem);
+        var delay = _timeToClose.m_Seconds - sw.Elapsed.TotalSeconds;
+        yield return new WaitForSeconds((float)delay);
+
+        if (spawnedItem)
+        {
+            Destroy(spawnedItem);
+        }
+
         _controller.Play("CloseLid");
         AudioController.PlayBSound(_fmodEmitter,
             "event:/Mystery Box/close",

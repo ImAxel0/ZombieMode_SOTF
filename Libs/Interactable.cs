@@ -24,9 +24,9 @@ public class Interactable
     /// <param name="type">Type of interaction: Take = quick press | Open = long press</param>
     /// <param name="tex">Icon of the interact UI</param>
     /// <returns>The <see langword="LinkUiElement"/> component associated with the given GameObject, <see langword="null"/> if the GameObject already has an interactable UI</returns>
-    public static LinkUiElement Create(GameObject go, float activeDistance = 3f, InteractableType type = InteractableType.Take, Texture tex = null)
+    public static LinkUiElement Create(GameObject go, float activeDistance = 3f, InteractableType type = InteractableType.Take, Texture tex = null, bool forceAdd = false)
     {
-        if (_getUIElement(go))
+        if (_getUIElement(go) && !forceAdd)
         {
             RLog.Error("Given GameObject already has an Interactable UI");
             return null;

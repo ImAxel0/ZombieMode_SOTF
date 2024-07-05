@@ -18,6 +18,7 @@ public class WallItems : MonoBehaviour
     static SonsFMODEventEmitter _fmodEmitter;
     static Dictionary<ItemsId, Tuple<LinkUiElement, int>> ItemCostPair = new();
     static Vector4 _color = new Vector4(1, 1, 1, 0.3f);
+    static float _ammoDiscount = 0.3f;
 
     public struct Katana
     {
@@ -35,14 +36,12 @@ public class WallItems : MonoBehaviour
     {
         public static LinkUiElement Ui;
         public static int Cost = 6000;
-        public static int AmmoAmount = 60;
     }
 
     public struct PistolAmmo
     {
         public static LinkUiElement Ui;
         public static int Cost = 1250;
-        public static int Amount = 140;
     }
 
     public struct Grenade
@@ -75,7 +74,7 @@ public class WallItems : MonoBehaviour
         ItemCostPair.Add(ItemsId.ModernAxe, new(ModernAxe.Ui, ModernAxe.Cost));
 
         var pistolAmmoWall = Instantiate(WallItemBundle.WallItem, new Vector3(-1159.488f, 60, 0.5509f), Quaternion.Euler(0, 282, 0));
-        pistolAmmoWall.GetComponentInChildren<Text>().text = $"Pistol ammo x{PistolAmmo.Amount}: {PistolAmmo.Cost}";
+        pistolAmmoWall.GetComponentInChildren<Text>().text = $"Pistol ammo x{140}: {PistolAmmo.Cost}";
         pistolAmmoWall.GetComponentInChildren<RawImage>().texture = ItemDatabaseManager.ItemById((int)ItemsId.PistolAmmo).UiData._icon;
         pistolAmmoWall.GetComponentInChildren<RawImage>().color = _color;
         PistolAmmo.Ui = Interactable.Create(pistolAmmoWall, 1.5f, Interactable.InteractableType.Open, ItemDatabaseManager.ItemById((int)ItemsId.PistolAmmo).UiData._icon);
@@ -101,21 +100,21 @@ public class WallItems : MonoBehaviour
         switch (id)
         {
             case ItemsId.PistolAmmo:
-                LocalPlayer.Inventory.AddItem((int)id, PistolAmmo.Amount, true);
+                CustomInventory.GiveAmmoFor((int)ItemsId.CompactPistol);
                 break;
             case ItemsId.Grenade:
                 LocalPlayer.Inventory.AddItem((int)id, Grenade.Amount, true);
                 break;
             case ItemsId.ShotgunPumpAction:
+                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), (ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
+                CustomInventory.GiveAmmoFor((int)ItemsId.ShotgunPumpAction);
                 LocalPlayer.Inventory.AddItem((int)id);
-                LocalPlayer.Inventory.TryEquip((int)id, false);
-                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), id);
-                LocalPlayer.Inventory.AddItem((int)ItemsId.BuckshotAmmo, Shotgun.AmmoAmount, true);
+                LocalPlayer.Inventory.TryEquip((int)id, false);               
                 break;
             default:
+                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), (ItemsId)LocalPlayer.Inventory.RightHandItem._itemID);
                 LocalPlayer.Inventory.AddItem((int)id);
                 LocalPlayer.Inventory.TryEquip((int)id, false);
-                CustomInventory.Instance.SetMainItem(CustomInventory.Instance.GetEquippedIndex(), id);
                 break;
         }
         ScoreSystem.DecScore(cost);
@@ -128,19 +127,35 @@ public class WallItems : MonoBehaviour
         {
             foreach (var pair in ItemCostPair)
             {
-                if (pair.Value.Item1.IsActive && ScoreSystem.Score.Value >= pair.Value.Item2)
+                if (pair.Value.Item1.IsActive && LocalPlayer.Inventory.Owns((int)pair.Key) && pair.Key != ItemsId.PistolAmmo && pair.Key != ItemsId.Grenade)
                 {
-                    if (LocalPlayer.Inventory.RightHandItem == null || !CustomInventory.Instance.MainItems.Contains((ItemsId)LocalPlayer.Inventory.RightHandItem._itemID))
+                    if (ItemDatabaseManager.ItemById((int)pair.Key).Ammo != null)
                     {
-                        LocalPlayer.Sfx.PlayRemove();
-                        SonsTools.ShowMessage("A primary item must be equipped to buy");
-                        break;
+                        // give ammo for weapon type but decrease score price
+                        if (LocalPlayer.Inventory.Owns((int)pair.Key) && ScoreSystem.Score.Value >= pair.Value.Item2 * _ammoDiscount)
+                        {
+                            CustomInventory.GiveAmmoFor((int)pair.Key);
+                            ScoreSystem.DecScore((int)(pair.Value.Item2 * _ammoDiscount));
+                            AudioController.PlayBSound(_fmodEmitter, "event:/Buying/wall-item", AudioController.SoundType.Sfx);
+                        }
+                        else
+                        {
+                            LocalPlayer.Sfx.PlayRemove();
+                            SonsTools.ShowMessage($"Needs <color=yellow>{(int)(pair.Value.Item2 * _ammoDiscount)}</color> to buy");
+                        }
                     }
-
-                    if (LocalPlayer.Inventory.Owns((int)pair.Key) && pair.Key != ItemsId.PistolAmmo && pair.Key != ItemsId.Grenade)
+                    else
                     {
                         LocalPlayer.Sfx.PlayRemove();
                         SonsTools.ShowMessage("You already own this item");
+                    }             
+                }
+                else if (pair.Value.Item1.IsActive && ScoreSystem.Score.Value >= pair.Value.Item2)
+                {
+                    if (LocalPlayer.Inventory.RightHandItem == null || !CustomInventory.Instance.MainItems.Contains(LocalPlayer.Inventory.RightHandItem._itemID))
+                    {
+                        LocalPlayer.Sfx.PlayRemove();
+                        SonsTools.ShowMessage("A primary item must be equipped to buy");
                         break;
                     }
                     BuyItem(pair.Key, pair.Value.Item2);
@@ -149,8 +164,7 @@ public class WallItems : MonoBehaviour
                 {
                     LocalPlayer.Sfx.PlayRemove();
                     SonsTools.ShowMessage($"Needs <color=yellow>{pair.Value.Item2}</color> to buy");
-                }
-                    
+                }                  
             }
         }
     }
