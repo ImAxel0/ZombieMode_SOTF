@@ -30,8 +30,11 @@ public class ZMainMenu : MonoBehaviour
     {
         SonsPanel = AxCreatePanel("SonsPanel", false, new Vector2(300, 100), AnchorType.TopRight, Color.black.WithAlpha(0), EBackground.RoundedStandard)
             .Position(-310, -110).Vertical(5, "EC").OverrideSorting(50)
-            - AxMenuButton("Play ZombieMode", () => { ToggleMenu().RunCoro(); }, new Color(0.72f, 0.25f, 0.25f), EBackground.RoundedStandard)
+            - AxMenuButton("Play ZombieMode", () => { ToggleMenu().RunCoro(); }, new Color(0.72f, 0.25f, 0.25f), EBackground.RoundedStandard).BindVisibility(Installer.IsInstalled)
             - AxMenuButton("Installer", InstallerUi.ShowInstaller, new Color(0.48f, 0.16f, 0.16f), EBackground.RoundedStandard);
+
+        if (Config.HideMenuPanel.Value)
+            SonsPanel.Active(false);
 
         TMP_FontAsset font_asset = TMP_FontAsset.CreateFontAsset(UiManager.Headliner45);
 

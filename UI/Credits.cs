@@ -1,12 +1,9 @@
 ﻿using SonsSdk;
 using SUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
+using ZombieMode.Libs;
 using static SUI.SUI;
 
 namespace ZombieMode.UI;
@@ -43,6 +40,8 @@ public class Credits
             scroll.Add(CreditTextLine(line));
         }*/
 
+        ReadCredits(scroll);
+
         var bottomContainer = SContainer.Background(new Color(0.06f, 0.06f, 0.06f, 0.8f), EBackground.None).PHeight(50).PaddingVertical(10);
         bottomContainer.Add(SButton.Text("Back").Notify(ToggleCreditsPanel).Dock(EDockType.Fill).FontAutoSize(true));
         creditsPanel.Add(bottomContainer);
@@ -56,6 +55,22 @@ public class Credits
     public static void ToggleCreditsPanel()
     {
         TogglePanel(MAIN_MENU_CREDITS);
+    }
+
+    private static void ReadCredits(SScrollContainerOptions scroll)
+    {
+        if (ResourcesLoader.TryGetEmbeddedResourceBytes("Credits.txt", out byte[] bytes))
+        {
+            byte[] data = bytes;
+            string tempFilePath = Path.Combine(Application.persistentDataPath, $"{Guid.NewGuid()}.txt");
+            File.WriteAllBytes(tempFilePath, data);
+
+            foreach (var line in File.ReadLines(tempFilePath))
+            {
+                scroll.Add(CreditTextLine(line));
+            }
+            File.Delete(tempFilePath);
+        }
     }
 
     private static SLabelOptions CreditTextLine(string text, int fontsize = 34)

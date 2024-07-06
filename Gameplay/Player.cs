@@ -8,8 +8,8 @@ using HarmonyLib;
 using TheForest;
 using ZombieMode.Libs;
 using TheForest.Items.Inventory;
-using Sons.Cutscenes;
-using ZombieMode.Core;
+using System.Diagnostics;
+using Obi;
 
 namespace ZombieMode.Gameplay;
 
@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
         {
             if (LocalPlayer.Vitals.Health._currentValue < 100)
             {
-                LocalPlayer.Vitals.Health._currentValue++;
+                LocalPlayer.Vitals.SetHealth(LocalPlayer.Vitals.GetHealth() + 1);
                 yield return new WaitForSeconds(0.25f);
             }
             yield return null;
@@ -67,6 +67,13 @@ public class Player : MonoBehaviour
         Overlays.DoOverlay(Overlays.OverlayTypes.Blood);
     }
 
+    public static void LockStats()
+    {
+        LocalPlayer.Vitals.Fullness.SetMin(100);
+        LocalPlayer.Vitals.Hydration.SetMin(100);
+        LocalPlayer.Vitals.Rested.SetMin(100);
+    }
+
     public void Update()
     {
         if (LocalPlayer.Vitals.IsAlive() == false)
@@ -88,5 +95,10 @@ public class Player : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    private void OnDestroy()
+    {
+        IsOnLava = false;
     }
 }

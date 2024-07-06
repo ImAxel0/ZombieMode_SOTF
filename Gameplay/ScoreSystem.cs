@@ -4,6 +4,8 @@ using SUI;
 using Sons.Ai.Vail;
 using TheForest.Utils;
 using ZombieMode.UI;
+using Sons.Input;
+using UnityEngine.SocialPlatforms.Impl;
 
 namespace ZombieMode.Gameplay;
 
@@ -43,11 +45,11 @@ public class ScoreSystem : MonoBehaviour
         StringScore.Set($"Score <color=yellow>{Score.Value} $</color>");
         StringPlayerKills.Set($"Kills <color=red>{PlayerKills}</color>");
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (InputSystem.InputMapping.@default.VoiceChat.IsPressed())
         {
             Scoreboard.Show(true);
         }
-        else if (Input.GetKeyUp(KeyCode.Tab))
+        else
         {
             Scoreboard.Show(false);
         }

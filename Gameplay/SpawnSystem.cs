@@ -6,7 +6,6 @@ using UnityEngine;
 using ZombieMode.Helpers;
 using RedLoader;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace ZombieMode.Gameplay;
 
@@ -175,12 +174,7 @@ public class SpawnSystem : MonoBehaviour
             SpawnPointsDict.TryGetValue(SpawnPointsDict.ElementAt(idx).Key, out var spawnPoint);
             var point = new SpawnPoint() { Position = spawnPoint.Item1 + UnityEngine.Random.insideUnitSphere * spawnPoint.Item2 };
             var spawnedActor = CannibalSpawner.SpawnWorldSimActor(point.Position, 0, 1);
-            var spawnedVail = VailWorldSimulation.Instance().ConvertToRealActor(spawnedActor);
-
-            if (Game.Round.Value >= 5)
-            {
-                ActorsManager.Ignite.SpawnIgnite(spawnedVail);
-            }          
+            var spawnedVail = VailWorldSimulation.Instance().ConvertToRealActor(spawnedActor);       
 
             yield return new WaitForSeconds(HordeData.SpawnDelayBetweenEnemies);
         }
@@ -190,6 +184,12 @@ public class SpawnSystem : MonoBehaviour
 
     private void OnDestroy()
     {
+        HordeData.EnemiesToSpawn = 0;
+        HordeData.SpawnDelayBetweenEnemies = 2f;
+        initRoundsCorrection = 4f;
+        canSpawnEnemies = false;
+        LockSpawn = false;
+
         // resetting spawn points on death
         foreach (var _spawnPoint in GymSpawns.Keys)
         {

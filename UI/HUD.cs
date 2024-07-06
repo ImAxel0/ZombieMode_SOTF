@@ -11,8 +11,6 @@ using UnityEngine.UI;
 using System.Collections;
 using ZombieMode.Libs;
 using ZombieMode.Gameplay;
-using static SonsSdk.ItemTools;
-using static System.Net.Mime.MediaTypeNames;
 using Sons.Items.Core;
 
 namespace ZombieMode.UI;

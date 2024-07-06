@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Credits\Credits.txt" />
       <None Remove="Resources\Font\HeadlinerNo.45.ttf" />
       <None Remove="Resources\Images\closed-fist.png" />
       <None Remove="Resources\Images\ConsumableIcons\DoubleScoreIcon.png" />
@@ -50,6 +51,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources\Credits\Credits.txt" />
       <EmbeddedResource Include="Resources\Font\HeadlinerNo.45.ttf" />
       <EmbeddedResource Include="Resources\Images\closed-fist.png" />
       <EmbeddedResource Include="Resources\Images\ConsumableIcons\DoubleScoreIcon.png" />

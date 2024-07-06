@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using FMODUnity;
 using ZombieMode.Libs;
 using ZombieMode.Core;
-using TheForest.Utils;
 
 namespace ZombieMode.Gameplay;
 
@@ -305,6 +304,9 @@ public class SceneMaterialsSwap : MonoBehaviour
         {
             WoodTilePanelB_merged.sharedMaterials[i] = woodFloor;
         }
+
+        GameObject.Find("BunkerAll/BE_EpicRoom_Baked/WaterfallSfx").SetActive(false);
+
         /*
         GameObject.Find($"BunkerAll/BE_EpicRoom_Baked/WATER").GetChildren().Where(ch => ch.name.Contains("BunkerWaterfallALODS")).ToList().ForEach(waterfall =>
         {

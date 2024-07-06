@@ -1,16 +1,18 @@
-﻿using Construction.Utils;
-using RedLoader;
+﻿using RedLoader;
+using RedLoader.Utils;
 using Sons.Ai.Vail;
+using Sons.Gameplay.GameSetup;
 using Sons.Gui;
 using Sons.Save;
 using SonsSdk;
+using Steamworks;
 using SUI;
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZombieMode.Gameplay;
 using ZombieMode.Libs;
-using ZombieMode.UI;
 using static SUI.SUI;
 using static ZombieMode.Libs.AXSUI;
 
@@ -18,6 +20,10 @@ namespace ZombieMode.Core;
 
 public class Loading
 {
+    [DllImport("shell32.dll")]
+    public static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr pszPath);
+    public static Guid localLowId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
+
     public static SContainerOptions LoadingPanel;
     public static Observable<string> LoadingInfo = new("");
     public static Observable<float> LoadingProgress = new(0);
@@ -33,6 +39,23 @@ public class Loading
         "Stay away from the lava",
         "Take headshots to gain more points",
     };
+
+    public static string GetKnownFolderPath(Guid knownFolderId)
+    {
+        IntPtr pszPath = IntPtr.Zero;
+        try
+        {
+            int hr = SHGetKnownFolderPath(knownFolderId, 0, IntPtr.Zero, out pszPath);
+            if (hr >= 0)
+                return Marshal.PtrToStringAuto(pszPath);
+            throw Marshal.GetExceptionForHR(hr);
+        }
+        finally
+        {
+            if (pszPath != IntPtr.Zero)
+                Marshal.FreeCoTaskMem(pszPath);
+        }
+    }
 
     public static void UiCreate()
     {
@@ -76,11 +99,11 @@ public class Loading
 
     public static IEnumerator LoadIntoGame()
     {
-        Game.GameState = Game.GameStates.Loading;
         Resources.FindObjectsOfTypeAll<LoadMenu>()
         .First(x => x.name == "SinglePlayerLoadPanel")
-        .LoadSlotActivated(0000000001, SaveGameManager.GetData<GameStateData>(SaveGameType.SinglePlayer, 0000000001));
+        .LoadSlotActivated(1234567890, SaveGameManager.GetData<GameStateData>(SaveGameType.SinglePlayer, 1234567890));
 
+        Game.GameState = Game.GameStates.Loading;
         SceneLoadingIndicator loading = UnityEngine.Object.FindObjectOfType<SceneLoadingIndicator>();
         while (loading == null)
         {

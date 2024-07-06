@@ -181,8 +181,8 @@ public class AudioController
         emitter.Play();
     }
 
-    public static void StopBSound(SonsFMODEventEmitter emitter)
+    public static void StopBSound(SonsFMODEventEmitter emitter, FMOD.Studio.STOP_MODE stopMode = FMOD.Studio.STOP_MODE.IMMEDIATE)
     {
-        emitter.Stop();
+        emitter.instance.stop(stopMode);
     }
 }

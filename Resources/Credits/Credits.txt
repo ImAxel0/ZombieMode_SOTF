@@ -1,0 +1,24 @@
+<size=80><color=red>SOTF Zombie Mode</color></size>
+<size=40>Special thanks to <color=green>Toni Macaroni</color> for developing the base on which all of this can be possible</size>
+Thanks to all <color=green>people</color> from the Sons of the Forest discord server
+
+<size=60><color=yellow>Assets</color></size>
+
+Mystery Box by <color=green>Deep Field Development</color>
+Nuke asset by <color=green>RYO ARAI</color>
+FireSale asset by <color=green>PERFECT GAMES</color>
+Imperceptible asset by <color=green>JAROSLAV GRAFSKIY</color>
+LockThemUp asset by <color=green>NOLLIE INWARD GAME ASSETS</color>
+DoubleScore asset by <color=green>STUDIO PEPWUPER</color>
+Vending machines by <color=green>SNARKY PIXEL</color>
+Forge asset by <color=green>Tobiesen</color>
+Texture materials by <color=green>Rob luo</color>, <color=green>Yughues</color>
+Trails VFX's by <color=green>Vefects</color>
+
+<size=60><color=yellow>Audio</color></size>
+
+Sounds by <color=green>opengameart.org</color>, <color=green>epidemicsound.com</color>, <color=green>black ops zombie</color>
+
+
+
+Thanks to whoever I lost track off

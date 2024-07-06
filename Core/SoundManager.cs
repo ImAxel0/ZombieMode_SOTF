@@ -16,6 +16,7 @@ public class SoundManager
 
     public static void OnMasterLvlChange(float value)
     {
+        Config.MasterLvl.Value = value;
         if (musicEmitter.instance.isValid())
         {
             musicEmitter.instance.setVolume(value * 0.5f * AudioSettings._masterVolume * AudioSettings._musicVolume * MusicLvl);
@@ -25,6 +26,7 @@ public class SoundManager
 
     public static void OnMusicLvlChange(float value)
     {
+        Config.MusicLvl.Value = value;
         if (musicEmitter.instance.isValid())
         {
             musicEmitter.instance.setVolume(value * 0.5f * AudioSettings._musicVolume * AudioSettings._masterVolume * MasterLvl);
@@ -34,6 +36,7 @@ public class SoundManager
 
     public static void OnSfxLvlChange(float value)
     {
+        Config.SfxLvl.Value = value;
         SfxLvl = value;
     }
 }

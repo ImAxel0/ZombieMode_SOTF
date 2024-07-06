@@ -1,6 +1,7 @@
 ﻿using RedLoader;
 using RedLoader.Utils;
 using SonsSdk;
+using SUI;
 using UnityEngine;
 using ZombieMode.Core;
 using ZombieMode.Gameplay;
@@ -28,12 +29,14 @@ public class ZombieMode : SonsMod
     protected override void OnSdkInitialized()
     {
         HarmonyInst = HarmonyInstance;
+        SettingsRegistry.CreateSettings(this, null, typeof(Config), false, Config.OnUiClose);
         #if DEBUG
         GlobalEvents.OnGUI.Subscribe(Debugging.DebugUI);
         #endif
         SoundTools.LoadBank(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode\\ZombieMode.bank"));
         SoundManager.Init();
         UiManager.CreateAllUi();
+        Config.ApplySavedSettings();
         _isSdkOK = true;
     }
 
@@ -56,6 +59,7 @@ public class ZombieMode : SonsMod
                 ZMainMenu.SonsPanel.Active(true);
             }
             HarmonyInstance.UnpatchSelf();
+            Installer.IsInstalled.Set(Installer.CheckInstallation());
             Game.GameState = Game.GameStates.Menu;
         }
         else

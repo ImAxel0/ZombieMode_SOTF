@@ -42,10 +42,10 @@ public class DoorsManager : MonoBehaviour
 
         var three = Instantiate(DoorGo.Door, DoorsData.Gym.DoubleDoor.Item1, Quaternion.Euler(DoorsData.Gym.DoubleDoor.Item2));
         three.transform.localScale = DoorsData.Gym.DoubleDoor.Item3;
-        three.GetComponentInChildren<Text>().text = DoorsData.Gym.DoubleDoor.Item4.ToString();
-        var ui3 = Interactable.Create(three, _interactionDistance, Interactable.InteractableType.Open, icon);
-        UiCost.Add(ui3, DoorsData.Gym.DoubleDoor.Item4);
-        Doors.Add("GymDouble", three);
+        three.GetComponentInChildren<Text>().text = string.Empty;
+        //var ui3 = Interactable.Create(three, _interactionDistance, Interactable.InteractableType.Open, icon);
+        //UiCost.Add(ui3, DoorsData.Gym.DoubleDoor.Item4);
+        //Doors.Add("GymDouble", three);
 
         GameObject.Find(DoorsData.Spa.GlassDoors)?.SetActive(false);
         var four = Instantiate(DoorGo.Door, DoorsData.Gym.GlassDoor.Item1, Quaternion.Euler(DoorsData.Gym.GlassDoor.Item2));
@@ -61,6 +61,16 @@ public class DoorsManager : MonoBehaviour
         var ui5 = Interactable.Create(five, _interactionDistance, Interactable.InteractableType.Open, icon);
         UiCost.Add(ui5, DoorsData.Spa.BigDoor.Item4);
         Doors.Add("SpaBig", five);
+
+        // stairs right
+        var six = Instantiate(DoorGo.Door, new Vector3(-1095.6f, 68.25f, 7.67f), Quaternion.Euler(0, 191, 0));
+        six.transform.localScale = new Vector3(0.1f, 3.7f, 10);
+        six.GetComponentInChildren<Text>().text = string.Empty;
+
+        // stairs left
+        var seven = Instantiate(DoorGo.Door, new Vector3(-1098.42f, 68.25f, -6.6f), Quaternion.Euler(0, 191, 0));
+        seven.transform.localScale = new Vector3(0.1f, 3.7f, 10);
+        seven.GetComponentInChildren<Text>().text = string.Empty;
     }
 
     public static void OpenDoor(GameObject door)
@@ -71,12 +81,6 @@ public class DoorsManager : MonoBehaviour
         {
             case "SpaBig":
                 SpawnSystem.EnableSpawnPoint(SpawnSystem.GymSpawns);
-                break;
-            case "GymDouble":
-                SpawnSystem.EnableSpawnPoint(SpawnSystem.GymPoolSpawns);
-                break;
-            case "SpaLeft":
-                SpawnSystem.EnableSpawnPoint(SpawnSystem.StairsHallSpawns);
                 break;
             case "SpaRight":
                 SpawnSystem.EnableSpawnPoint(SpawnSystem.StairsHallSpawns);

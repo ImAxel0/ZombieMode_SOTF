@@ -50,7 +50,8 @@ public class ActorsManager
     [HarmonyPrefix]
     public static void OnDeath(ref WorldSimActor deadActor, ref bool killedByPlayer)
     {
-        if (Consumables.ScoreBuffer >= Consumables.DropEveryScore && Consumables.DropsBuffer < Consumables.MaxRoundDrops)
+        if (Consumables.ScoreBuffer >= Consumables.DropEveryScore && Consumables.DropsBuffer < Consumables.MaxRoundDrops
+            && !Consumables.ConsumableFadeTimer.IsRunning)
         {
             Consumables.SpawnRandConsumable(deadActor).RunCoro();
         }

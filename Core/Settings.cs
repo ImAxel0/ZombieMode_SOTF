@@ -17,12 +17,12 @@ public class Settings
 
         AxGetMenuTitle((SPanelOptions)SettingsPanel).FontColor(new Color(0.51f, 0.03f, 0.03f)).FontStyle(FontStyles.UpperCase);
 
-        var main = AxGetMainContainer((SPanelOptions)SettingsPanel).Background(new Color(0.04f, 0.04f, 0.04f), EBackground.RoundSmall);
+        var main = AxGetMainContainer((SPanelOptions)SettingsPanel).Background(new Color(0.04f, 0.04f, 0.04f), EBackground.None);
 
         main.Add(AxDivider(DividerText("Audio")));
-        main.Add(AxMenuSliderFloat("Master", LabelPosition.Top, 0, 2, 1, 0.1f, SoundManager.OnMasterLvlChange));
-        main.Add(AxMenuSliderFloat("Music", LabelPosition.Top, 0, 2, 1, 0.1f, SoundManager.OnMusicLvlChange));
-        main.Add(AxMenuSliderFloat("Sfx", LabelPosition.Top, 0, 2, 1, 0.1f, SoundManager.OnSfxLvlChange));
+        main.Add(AxMenuSliderFloat("Master", LabelPosition.Top, 0, 2, Config.MasterLvl.Value, 0.1f, SoundManager.OnMasterLvlChange));
+        main.Add(AxMenuSliderFloat("Music", LabelPosition.Top, 0, 2, Config.MusicLvl.Value, 0.1f, SoundManager.OnMusicLvlChange));
+        main.Add(AxMenuSliderFloat("Sfx", LabelPosition.Top, 0, 2, Config.SfxLvl.Value, 0.1f, SoundManager.OnSfxLvlChange));
     }
 
     public static void ShowSettings(bool onoff)

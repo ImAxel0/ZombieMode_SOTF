@@ -72,22 +72,22 @@ public class Overlays : MonoBehaviour
         }*/
 
         GetOverlayInfo(overlay, out var image, out var time);
-        image.ImageObject.CrossFadeAlpha(startAlpha, 0, true);
-        image.ImageObject.CrossFadeAlpha(toAlpha, time, true);
+        image.ImageObject.CrossFadeAlpha(startAlpha, 0, false);
+        image.ImageObject.CrossFadeAlpha(toAlpha, time, false);
     }
 
     public void Update()
     {
         if (LocalPlayer.Vitals.Health._currentValue >= LocalPlayer.Vitals.Health.GetMax())
         {
-            BloodImage.ImageObject.CrossFadeAlpha(0, 0, true);
+            BloodImage.ImageObject.CrossFadeAlpha(0, 0, false);
             return;
         }
         else if (LocalPlayer.Vitals.Health._currentValue >= 80)
         {
-            BloodImage.ImageObject.CrossFadeAlpha(Mathf.Clamp(5 / LocalPlayer.Vitals.Health._currentValue, 0, 1), 0, true);
+            BloodImage.ImageObject.CrossFadeAlpha(Mathf.Clamp(5 / LocalPlayer.Vitals.Health._currentValue, 0, 1), 0, false);
             return;
         }
-        BloodImage.ImageObject.CrossFadeAlpha(Mathf.Clamp(10 / LocalPlayer.Vitals.Health._currentValue, 0, 1), 0, true);
+        BloodImage.ImageObject.CrossFadeAlpha(Mathf.Clamp(10 / LocalPlayer.Vitals.Health._currentValue, 0, 1), 0, false);
     }
 }

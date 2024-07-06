@@ -6,7 +6,6 @@ using TheForest;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine;
 using ZombieMode.Gameplay;
-using ZombieMode.Libs;
 using System.Collections;
 using System.Reflection;
 using RedLoader;
@@ -104,6 +103,36 @@ public class ZombieConsole : MonoBehaviour
             availableCommands.Add(method.Name);
         }
         return availableCommands;
+    }
+
+    private static void spawnconsumable(string str)
+    {
+        List<string> availables = new() { "nuke", "firesale", "lockthemup", "imperceptible", "doublescore" };
+        if (availables.All(x => x != str))
+        {
+            SonsTools.ShowMessage($"Parameter should be either \"nuke\", \"firesale\", \"lockthemup\", \"imperceptible\", \"doublescore\"");
+            return;
+        }
+
+        switch (str)
+        {
+            case "nuke":
+                Consumables.SpawnConsumable(NukeConsumableGo.NukeConsumable).RunCoro();
+                break;
+            case "firesale":
+                Consumables.SpawnConsumable(FireSaleConsumableGo.FireSaleConsumable).RunCoro();
+                break;
+            case "lockthemup":
+                Consumables.SpawnConsumable(LockThemUpConsumableGo.LockThemUpConsumable).RunCoro();
+                break;
+            case "imperceptible":
+                Consumables.SpawnConsumable(ImperceptibleConsumableGo.ImperceptibleConsumable).RunCoro();
+                break;
+            case "doublescore":
+                Consumables.SpawnConsumable(DoubleScoreConsumableGo.DoubleScoreConsumable).RunCoro();
+                break;
+        }
+        SonsTools.ShowMessage($"Ran command {Com($"spawnconsumable {str}")}");
     }
 
     private static void donuke(string str)
@@ -231,56 +260,6 @@ public class ZombieConsole : MonoBehaviour
         SonsTools.ShowMessage($"Ran command {Com($"spawnignite {value}")}");
     }
 
-    private static void spawngiant(string count)
-    {
-        if (string.IsNullOrEmpty(count))
-            count = 1.ToString();
-
-        if (!int.TryParse(count, out int value))
-        {
-            SonsTools.ShowMessage($"Invalid parameter, usage: {Com("spawngiant count")}");
-            return;
-        }
-
-        Transform mainCam = LocalPlayer.MainCamTr;
-        RaycastHit hitSpawn;
-        if (Physics.Raycast(mainCam.position, mainCam.forward, out hitSpawn, 10f))
-        {
-            for (int i = 0; i < value; i++)
-            {
-                var actor = SpawnSystem.CannibalSpawner.SpawnWorldSimActor(hitSpawn.point + mainCam.forward * 10, 0, 1);
-                VailActor spawnedActor = VailActorManager.FindActiveActor(actor);
-                //EnemiesManagement.TheGiant.InitGiant(spawnedActor);
-            }
-        }
-        SonsTools.ShowMessage($"Ran command {Com($"spawngiant {value}")}");
-    }
-
-    private static void spawnspeedy(string count)
-    {
-        if (string.IsNullOrEmpty(count))
-            count = 1.ToString();
-
-        if (!int.TryParse(count, out int value))
-        {
-            SonsTools.ShowMessage($"Invalid parameter, usage: {Com("spawnspeedy count")}");
-            return;
-        }
-
-        Transform mainCam = LocalPlayer.MainCamTr;
-        RaycastHit hitSpawn;
-        if (Physics.Raycast(mainCam.position, mainCam.forward, out hitSpawn, 10f))
-        {
-            for (int i = 0; i < value; i++)
-            {
-                var actor = SpawnSystem.CannibalSpawner.SpawnWorldSimActor(hitSpawn.point + mainCam.forward * 10, 0, 1);
-                VailActor spawnedActor = VailActorManager.FindActiveActor(actor);
-                //EnemiesManagement.TheSpeedy.InitSpeedy(spawnedActor);
-            }
-        }
-        SonsTools.ShowMessage($"Ran command {Com($"spawnspeedy {value}")}");
-    }
-
     private static void killallenemies(string str)
     {
         if (!string.IsNullOrEmpty(str))
@@ -334,17 +313,6 @@ public class ZombieConsole : MonoBehaviour
         }
         MysteryBoxController.OpenBox().RunCoro();
         SonsTools.ShowMessage($"Ran command {Com("boxopen")}");
-    }
-
-    private static void boxmove(string str)
-    {
-        if (!string.IsNullOrEmpty(str))
-        {
-            SonsTools.ShowMessage($"Parameter is not required, usage: {Com("boxmove")}");
-            return;
-        }
-        //MysteryBoxController.MoveBox(0).RunCoro();
-        SonsTools.ShowMessage($"Ran command {Com("boxmove")}");
     }
 
     private static void givehealthcola(string str)
@@ -444,11 +412,6 @@ public class ZombieConsole : MonoBehaviour
         SonsTools.ShowMessage($"Ran command {Com($"godmode {value}")}");
     }
 
-    private static void matchrestart(string str)
-    {
-        // load new game
-    }
-
     private static void setmasterlevel(string lvl)
     {
         if (!float.TryParse(lvl.Replace(".", ","), out float value))
@@ -480,38 +443,6 @@ public class ZombieConsole : MonoBehaviour
         }
         SoundManager.OnSfxLvlChange(Mathf.Clamp(value, 0f, 1f));
         SonsTools.ShowMessage($"Ran command {Com($"setsfxlevel {value}")}");
-    }
-
-    private static void playsound(string identifier)
-    {
-        if (string.IsNullOrEmpty(identifier))
-        {
-            SonsTools.ShowMessage($"Invalid parameter, usage: {Com("playsound soundidentifier")}");
-            return;
-        }
-        AudioController.PlaySound(identifier, AudioController.SoundType.Sfx);
-        SonsTools.ShowMessage($"Ran command {Com($"playsound {identifier}")}");
-    }
-
-    private static void stopsound(string identifier)
-    {
-        if (!AudioController.StopSound(identifier))
-        {
-            SonsTools.ShowMessage($"{identifier} is not a valid sound identifier");
-            return;
-        }
-        SonsTools.ShowMessage($"Ran command {Com($"stopsound {identifier}")}");
-    }
-
-    private static void stopallsounds(string str)
-    {
-        if (!string.IsNullOrEmpty(str))
-        {
-            SonsTools.ShowMessage($"Parameter is not required, usage: {Com("stopallsounds")}");
-            return;
-        }
-        AudioController.StopAllSounds();
-        SonsTools.ShowMessage($"Ran command {Com("stopallsounds")}");
     }
 
     private static void debugspawnhealthcola(string str)
@@ -621,19 +552,11 @@ public class ZombieConsole : MonoBehaviour
             SonsTools.ShowMessage($"Parameter is not required, usage: {Com("unlockdoors")}");
             return;
         }
-        //DoorsManager.UnlockDoors();
-        SonsTools.ShowMessage($"Ran command {Com("unlockdoors")}");
-    }
-
-    private static void turnpoweron(string str)
-    {
-        if (!string.IsNullOrEmpty(str))
+        foreach (var door in DoorsManager.Doors.Values)
         {
-            SonsTools.ShowMessage($"Parameter is not required, usage: {Com("turnpoweron")}");
-            return;
+            door.SetActive(false);
         }
-        //PowerManagement.EnablePower();
-        SonsTools.ShowMessage($"Ran command {Com("turnpoweron")}");
+        SonsTools.ShowMessage($"Ran command {Com("unlockdoors")}");
     }
 
     public static void ToggleZombieConsole()
@@ -643,7 +566,6 @@ public class ZombieConsole : MonoBehaviour
         TogglePanel(ZombieConsoleUi.ZOMBIE_CONSOLE_ID, ShowConsole);
         if (ShowConsole)
         {
-            //AudioController.PlaySound("UiInteract", AudioController.SoundType.Sfx);
             ZombieConsoleUi.ConsoleInput.InputFieldObject.Select();
         }
     }

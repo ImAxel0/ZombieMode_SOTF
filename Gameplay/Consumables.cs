@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Data;
 using ZombieMode.Core;
 using SUI;
-using static RedLoader.RLog;
+using SonsSdk;
+using ZombieMode.Libs;
+using FMODUnity;
 
 namespace ZombieMode.Gameplay;
 
@@ -14,6 +16,7 @@ namespace ZombieMode.Gameplay;
 public class Consumables : MonoBehaviour
 {
     public static Dictionary<GameObject, Action> ConsumablesPair = new();
+    public static Stopwatch ConsumableFadeTimer = new();
     static GameObject _spawnedConsumable;
     static float _consumablesDuration = 30f;
     static float _timeToFade = 15f;
@@ -30,13 +33,24 @@ public class Consumables : MonoBehaviour
     public static Observable<bool> IsLockThemUp = new(false);
     public static Observable<bool> IsSlowThemDown = new(false);
 
+    private static SonsFMODEventEmitter FMODEmitter; 
+
     public void Start()
     {
+        FMODEmitter = new();
+
         ConsumablesPair.Add(NukeConsumableGo.NukeConsumable, ConsumablesController.DoNuke);
         ConsumablesPair.Add(FireSaleConsumableGo.FireSaleConsumable, () => ConsumablesController.DoFireSale().RunCoro());
         ConsumablesPair.Add(ImperceptibleConsumableGo.ImperceptibleConsumable, () => ConsumablesController.DoImperceptible().RunCoro());
         ConsumablesPair.Add(LockThemUpConsumableGo.LockThemUpConsumable, () => ConsumablesController.DoLockThemUp().RunCoro());
         ConsumablesPair.Add(DoubleScoreConsumableGo.DoubleScoreConsumable, () => ConsumablesController.DoDoubleScore().RunCoro());
+
+        var sh = Shader.Find("HDRP/Lit");
+        NukeConsumableGo.NukeConsumable.GetComponentsInChildren<MeshRenderer>().ToList().ForEach(x => x.sharedMaterial.shader = sh);
+        FireSaleConsumableGo.FireSaleConsumable.GetComponentsInChildren<MeshRenderer>().ToList().ForEach(x => x.sharedMaterial.shader = sh);
+        ImperceptibleConsumableGo.ImperceptibleConsumable.GetComponentsInChildren<MeshRenderer>().ToList().ForEach(x => x.sharedMaterial.shader = sh);
+        LockThemUpConsumableGo.LockThemUpConsumable.GetComponentsInChildren<MeshRenderer>().ToList().ForEach(x => x.sharedMaterial.shader = sh);
+        DoubleScoreConsumableGo.DoubleScoreConsumable.GetComponentsInChildren<MeshRenderer>().ToList().ForEach(x => x.sharedMaterial.shader = sh);
     }
 
     private void OnDestroy()
@@ -76,22 +90,53 @@ public class Consumables : MonoBehaviour
 
         _spawnedConsumable.AddComponent<ConsumablesController>();
 
-        Stopwatch sw = new();
-        sw.Start();
-
-        while (sw.Elapsed.Seconds <= _timeToFade)
+        ConsumableFadeTimer.Start();
+        while (ConsumableFadeTimer.Elapsed.Seconds <= _timeToFade)
         {
-            if (_wasPickedUp) break;
+            if (_wasPickedUp)
+            {
+                break;
+            }
             yield return null;
         }
+        ConsumableFadeTimer.Reset();
         Destroy(_spawnedConsumable);
+    }
+
+    public static IEnumerator SpawnConsumable(GameObject consumableGo)
+    {
+        if (ConsumablesPair.TryGetValue(consumableGo, out Action action))
+        {
+            UpdateStats();
+            _spawnedConsumable = Instantiate(consumableGo, SonsTools.GetPositionInFrontOfPlayer(3, 1f), Quaternion.identity);
+            _spawnedConsumable.AddComponent<ConsumablesController>();
+
+            Stopwatch sw = new();
+            sw.Start();
+
+            while (sw.Elapsed.Seconds <= _timeToFade)
+            {
+                if (_wasPickedUp) break;
+                yield return null;
+            }
+            Destroy(_spawnedConsumable);
+        }
     }
 
     [RegisterTypeInIl2Cpp]
     public class ConsumablesController : MonoBehaviour
     {
+        private SonsFMODEventEmitter _fmodEmitter;
+
+        private void Start()
+        {
+            _fmodEmitter = this.gameObject.AddComponent<SonsFMODEventEmitter>();
+            AudioController.PlayBSound(_fmodEmitter, "event:/Game/ConsumableAmbientSound", AudioController.SoundType.Sfx);
+        }
+
         public static void DoNuke()
         {
+            AudioController.PlayBSound(FMODEmitter, "event:/Consumables/NukeSfx", AudioController.SoundType.Sfx);
             VailActorManager.GetActiveActors().Where(actor => !actor.IsDead()).ToList().ForEach(actor =>
             {
                 actor.DismemberRandomPart();
@@ -102,6 +147,7 @@ public class Consumables : MonoBehaviour
 
         public static IEnumerator DoDoubleScore()
         {
+            AudioController.PlayBSound(FMODEmitter, "event:/Consumables/DoubleScoreSfx", AudioController.SoundType.Sfx);
             IsDoubleScore.Value = true;
             ScoreSystem.ScoreMultiplier = 2;
             yield return new WaitForSeconds(_consumablesDuration);
@@ -111,6 +157,7 @@ public class Consumables : MonoBehaviour
 
         public static IEnumerator DoFireSale(float salePerc = 0.5f)
         {
+            AudioController.PlayBSound(FMODEmitter, "event:/Consumables/FireSaleSfx", AudioController.SoundType.Sfx);
             IsFireSale.Value = true;
             ScoreSystem.SaleMultiplier = salePerc;
             yield return new WaitForSeconds(_consumablesDuration);
@@ -120,6 +167,7 @@ public class Consumables : MonoBehaviour
 
         public static IEnumerator DoLockThemUp()
         {
+            AudioController.PlayBSound(FMODEmitter, "event:/Consumables/LockThemUpSfx", AudioController.SoundType.Sfx);
             IsLockThemUp.Value = true;
             VailWorldSimulation.SetPaused(true);
             yield return new WaitForSeconds(_consumablesDuration);
@@ -129,6 +177,7 @@ public class Consumables : MonoBehaviour
 
         public static IEnumerator DoImperceptible()
         {
+            AudioController.PlayBSound(FMODEmitter, "event:/Consumables/ImperceptibleSfx", AudioController.SoundType.Sfx);
             IsImperceptible.Value = true;
             VailActorManager.SetGhostPlayer(true);
             yield return new WaitForSeconds(_consumablesDuration);
@@ -166,6 +215,16 @@ public class Consumables : MonoBehaviour
                         break;
                 }
             }
+        }
+
+        private void Update()
+        {
+            _fmodEmitter.instance.set3DAttributes(this.transform.position.To3DAttributes());
+        }
+
+        private void OnDestroy()
+        {
+            _fmodEmitter.instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         }
     }
 }

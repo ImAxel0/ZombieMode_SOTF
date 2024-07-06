@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/ToniMacaroni/RedLoader/main/MetadataSchema.json",
   "id": "ZombieMode",
-  "author": "You",
-  "version": "1.0.0",
-  "description": "A mod that does something.",
+  "author": "Im-_-Axel",
+  "version": "0.1.0",
+  "description": "Survive through hordes of enemies in a call of duty black ops zombie inspired game mode",
   "gameVersion": "1.0.0",
   "type": "Mod",
   "url": "..."

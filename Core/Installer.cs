@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.Diagnostics;
 using ZombieMode.UI;
+using Steamworks;
 
 namespace ZombieMode.Core;
 
@@ -17,8 +18,9 @@ public class Installer
     public static Observable<float> DownloadProgress = new(0);
     public static Observable<string> DownloadSpeed = new("");
 
-    //const string url = "https://github.com/ImAxel0/Download-Testing/releases/download/test-1.0.0/Testing.zip";
-    const string url = "https://download1654.mediafire.com/2igv7ebvo7ggcron1bSrsApYzFi5xycL7Fw3mT5j9ScaMnZzO16lAUTdDdKzjEzYyM9PRPqRCuBYDLfGpupCktkzUJjIMoQ_FdtGLlwQNOUXfGhiTqPqKxRHmHjyI7dvi2HdYBqBoXuaKNLBX5b5A5xSe9QmQZWJcRlV-mbvMurh/3v24ituz3ppogo1/ZombieModeContent.zip";
+    public static Observable<bool> IsInstalled = new(false);
+
+    const string url = "https://github.com/ImAxel0/Download-Testing/releases/download/test-1.0.0/Testing.zip";
     const string info = "This installer will download and install all of the necessary files to play ZombieMode\n" +
         "Click on the Start Download button to download the necessary files.";
     const string downloading = "The installer is now downloading the required files.\n" +
@@ -50,12 +52,12 @@ public class Installer
 
     public static void OnUninstall_Click()
     {
-        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")))
+        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")))
         {
-            var files = Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent"));
+            var files = Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode"));
             foreach (var file in files)
             {
-                if (file != Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent\\manifest.json"))
+                if (file != Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode\\manifest.json"))
                 {
                     File.Delete(file);
                 }
@@ -83,9 +85,9 @@ public class Installer
 
     public static bool CheckInstallation()
     {
-        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")))
+        if (Directory.Exists(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")))
         {
-            if (Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent")).Length > 10)
+            if (Directory.GetFiles(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode")).Length > 10)
             {
                 return true;
             }
@@ -122,9 +124,19 @@ public class Installer
         File.WriteAllBytes(destPath, www.downloadHandler.data);
         RLog.Msg($"Download finished at: {destPath}");
         IsDownloading.Set(false);
-        UnZip(destPath, Path.Combine(LoaderEnvironment.ModsDirectory, "TestingContent"));
+        UnZip(destPath, Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode"));
+        MoveSaveGame();
         SonsTools.ShowMessageBox("Installation completed", "Restart the game to play!");
         TextContent.Set(info);
+    }
+
+    static void MoveSaveGame()
+    {
+        string saveFolder = Path.Combine(Loading.GetKnownFolderPath(Loading.localLowId), $"Endnight\\SonsOfTheForest\\Saves\\{SteamUser.GetSteamID()}\\SinglePlayer\\1234567890");
+        Directory.CreateDirectory(saveFolder);
+
+        File.Move(Path.Combine(LoaderEnvironment.ModsDirectory, "ZombieMode\\SaveData.zip"),
+            Path.Combine(saveFolder, "SaveData.zip"), true);
     }
 
     static IEnumerator GetFileSize(string url, Action<long> resut)
