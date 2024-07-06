@@ -1,6 +1,5 @@
 ﻿using TheForest.Utils;
 using ZombieMode.Helpers;
-using Sons.Items.Core;
 using TheForest;
 using UnityEngine;
 using Sons.Ai.Vail;
@@ -83,7 +82,6 @@ public class Game : MonoBehaviour
         DebugConsole.Instance._lockTimeOfDay("00");
         DebugConsole.Instance.SendCommand("clearpickups");
         ItemHotkeyController.GetInstance().gameObject.SetActive(false);
-        LocalPlayer._instance._vitals.SetHealth(100);
         Player.LockStats();
         GameObject.Find("SpaMusicGroup").SetActive(false);
         GameObject.Find("GymMusicGroup").SetActive(false);
@@ -106,6 +104,11 @@ public class Game : MonoBehaviour
         yield return new WaitForSeconds(2f);
         HUD.HudPanel.Active(true);
         Loading.ToggleLoading();
+        while (LocalPlayer.AnimControl.introCutScene)
+        {
+            yield return null;
+        }
+        LocalPlayer.Vitals.SetFullHealth();
     }
 
     private static void IncRound()

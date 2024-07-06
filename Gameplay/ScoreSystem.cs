@@ -5,14 +5,13 @@ using Sons.Ai.Vail;
 using TheForest.Utils;
 using ZombieMode.UI;
 using Sons.Input;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace ZombieMode.Gameplay;
 
 [RegisterTypeInIl2Cpp]
 public class ScoreSystem : MonoBehaviour
 {
-    public static Observable<int> Score = new(10000);
+    public static Observable<int> Score = new(500);
     public static Observable<string> StringScore = new(string.Empty);
     public static int ScoreMultiplier { get; set; } = 1;
     public static float SaleMultiplier { get; set; } = 1f;

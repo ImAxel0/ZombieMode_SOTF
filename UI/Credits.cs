@@ -1,6 +1,5 @@
 ﻿using SonsSdk;
 using SUI;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
 using ZombieMode.Libs;
@@ -33,12 +32,6 @@ public class Credits
         scroll.ContainerObject.Spacing(20);
         scroll.ContainerObject.PaddingHorizontal(10);
         scroll.SetParent(scrollbar);
-
-        /*
-        foreach (var line in File.ReadLines(@"C:\Users\Alex\Downloads\SurvivalModeThings\Credits.txt"))
-        {
-            scroll.Add(CreditTextLine(line));
-        }*/
 
         ReadCredits(scroll);
 

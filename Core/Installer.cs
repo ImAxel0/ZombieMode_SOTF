@@ -20,7 +20,7 @@ public class Installer
 
     public static Observable<bool> IsInstalled = new(false);
 
-    const string url = "https://github.com/ImAxel0/Download-Testing/releases/download/test-1.0.0/Testing.zip";
+    const string url = "https://github.com/ImAxel0/ZombieMode_SOTF/releases/download/v0.1.0/ZombieMode-Alpha1.zip";
     const string info = "This installer will download and install all of the necessary files to play ZombieMode\n" +
         "Click on the Start Download button to download the necessary files.";
     const string downloading = "The installer is now downloading the required files.\n" +

@@ -8,8 +8,6 @@ using HarmonyLib;
 using TheForest;
 using ZombieMode.Libs;
 using TheForest.Items.Inventory;
-using System.Diagnostics;
-using Obi;
 
 namespace ZombieMode.Gameplay;
 

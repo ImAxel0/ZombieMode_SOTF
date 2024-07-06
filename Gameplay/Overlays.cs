@@ -65,12 +65,6 @@ public class Overlays : MonoBehaviour
 
     public static void DoOverlay(OverlayTypes overlay, float toAlpha = 0, float startAlpha = 1)
     {
-        /*
-        if (overlay == OverlayTypes.Blood)
-        {  
-            return;
-        }*/
-
         GetOverlayInfo(overlay, out var image, out var time);
         image.ImageObject.CrossFadeAlpha(startAlpha, 0, false);
         image.ImageObject.CrossFadeAlpha(toAlpha, time, false);
